@@ -1,0 +1,511 @@
+{% stylesheet %}
+  .custom-hero {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  .custom-hero__container {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+  }
+
+  .custom-hero__media-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .custom-hero__image,
+  .custom-hero__video {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center center;
+    z-index: 1;
+  }
+
+  .custom-hero__video deferred-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .custom-hero__video deferred-media video,
+  .custom-hero__video deferred-media iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  .custom-hero__content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .custom-hero__content-inner {
+    max-width: 600px;
+  }
+
+  .custom-hero__overline {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-regular);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+  }
+
+  .custom-hero__headline {
+    font-family: var(--font-header);
+    font-weight: var(--font-weight-medium);
+    font-size: clamp(48px, 8vw, 120px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    margin-bottom: 0;
+    margin-top: 0;
+  
+  }
+
+
+
+  .custom-hero__button {
+    display: inline-block;
+    padding: 16px 48px;
+    font-family: var(--font-button);
+    font-weight: var(--font-weight-medium);
+    font-size: 14px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  /* Default Colors (Light text on dark background) */
+  .custom-hero:not(.custom-hero--inverted) {
+    color: var(--color-bg);
+  }
+
+  .custom-hero:not(.custom-hero--inverted) .custom-hero__button {
+    background-color: var(--color-bg);
+    color: var(--color-contrast-higher);
+  }
+
+  .custom-hero:not(.custom-hero--inverted) .custom-hero__button:hover {
+    background-color: var(--color-contrast-high);
+    color: var(--color-bg);
+  }
+
+  /* Inverted Colors (Dark text on light background) */
+  .custom-hero--inverted {
+    color: var(--color-contrast-higher);
+  }
+
+  .custom-hero--inverted .custom-hero__button {
+    background-color: var(--color-contrast-higher);
+    color: var(--color-bg);
+  }
+
+  .custom-hero--inverted .custom-hero__button:hover {
+    background-color: var(--color-contrast-high);
+    color: var(--color-bg);
+  }
+
+  /* Mobile Styles */
+  @media screen and (max-width: 749px) {
+    .custom-hero__container {
+      align-items: flex-end;
+      padding-bottom: 40px;
+    }
+
+    .custom-hero__content {
+      padding: 0 var(--spacing-md);
+      text-align: center;
+    }
+
+    .custom-hero__content-inner {
+      max-width: 100%;
+    }
+
+    .custom-hero__headline {
+      font-size: clamp(32px, 12vw, 64px);
+      margin-bottom: 16px;
+    }
+
+    .custom-hero__description {
+      margin: 0 auto 24px;
+      max-width: 320px;
+    }
+
+    .custom-hero__button {
+      padding: 14px 40px;
+      font-size: 13px;
+    }
+  }
+
+  /* Hide desktop media on mobile */
+  @media screen and (max-width: 749px) {
+    .custom-hero__media--desktop {
+      display: none;
+    }
+  }
+
+  /* Hide mobile media on desktop */
+  @media screen and (min-width: 750px) {
+    .custom-hero__media--mobile {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% liquid
+  assign has_desktop_image = false
+  assign has_desktop_video = false
+  assign has_mobile_image = false
+  assign has_mobile_video = false
+
+  if section.settings.desktop_image != blank and section.settings.desktop_media_type == 'image'
+    assign has_desktop_image = true
+  endif
+
+  if section.settings.desktop_media_type == 'video'
+    if section.settings.desktop_video_source == 'file' and section.settings.desktop_video_file_url != blank
+      assign has_desktop_video = true
+    elsif section.settings.desktop_video_source == 'upload' and section.settings.desktop_video != blank
+      assign has_desktop_video = true
+    endif
+  endif
+
+  if section.settings.mobile_image != blank and section.settings.mobile_media_type == 'image'
+    assign has_mobile_image = true
+  endif
+
+  if section.settings.mobile_media_type == 'video'
+    if section.settings.mobile_video_source == 'file' and section.settings.mobile_video_file_url != blank
+      assign has_mobile_video = true
+    elsif section.settings.mobile_video_source == 'upload' and section.settings.mobile_video != blank
+      assign has_mobile_video = true
+    endif
+  endif
+%}
+
+<section 
+  id="CustomHero-{{ section.id }}"
+  class="custom-hero{% if section.settings.invert_colors %} custom-hero--inverted{% endif %}"
+>
+  <div class="custom-hero__media-wrapper">
+    <!-- Desktop Media -->
+    {% if has_desktop_image %}
+      <div class="custom-hero__media--desktop">
+        {{
+          section.settings.desktop_image
+          | image_url: width: 3840
+          | image_tag:
+            class: 'custom-hero__image',
+            alt: section.settings.desktop_image.alt,
+            sizes: '100vw',
+            widths: '750, 1100, 1500, 1780, 2000, 3000, 3840'
+        }}
+      </div>
+    {% endif %}
+
+    {% if has_desktop_video %}
+      <div class="custom-hero__media--desktop">
+        {% if section.settings.desktop_video_source == 'file' %}
+          <video
+            class="custom-hero__video"
+            autoplay
+            muted
+            loop
+            playsinline
+            style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; z-index: 1;"
+          >
+            <source src="{{ section.settings.desktop_video_file_url }}" type="video/mp4">
+          </video>
+        {% else %}
+          {% render 'video',
+            video: section.settings.desktop_video,
+            video_class: 'custom-hero__video',
+            video_autoplay: true,
+            video_loop: true,
+            disable_controls: true,
+            video_style: 'position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; z-index: 1;'
+          %}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Mobile Media -->
+    {% if has_mobile_image %}
+      <div class="custom-hero__media--mobile">
+        {{
+          section.settings.mobile_image
+          | image_url: width: 1500
+          | image_tag:
+            class: 'custom-hero__image',
+            alt: section.settings.mobile_image.alt,
+            sizes: '100vw',
+            widths: '375, 550, 750, 1100, 1500'
+        }}
+      </div>
+    {% endif %}
+
+    {% if has_mobile_video %}
+      <div class="custom-hero__media--mobile">
+        {% if section.settings.mobile_video_source == 'file' %}
+          <video
+            class="custom-hero__video"
+            autoplay
+            muted
+            loop
+            playsinline
+            style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; z-index: 1;"
+          >
+            <source src="{{ section.settings.mobile_video_file_url }}" type="video/mp4">
+          </video>
+        {% else %}
+          {% render 'video',
+            video: section.settings.mobile_video,
+            video_class: 'custom-hero__video',
+            video_autoplay: true,
+            video_loop: true,
+            disable_controls: true,
+            video_style: 'position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center center; z-index: 1;'
+          %}
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Fallback placeholder if no media -->
+    {% unless has_desktop_image or has_desktop_video or has_mobile_image or has_mobile_video %}
+      <placeholder-image
+        class="custom-hero__image"
+        data-block-id="{{ section.id }}"
+        data-type="general"
+      ></placeholder-image>
+    {% endunless %}
+  </div>
+
+  <div class="custom-hero__container">
+    <div class="custom-hero__content">
+      <div class="custom-hero__content-inner">
+        {% if section.settings.overline != blank %}
+          <span class="custom-hero__overline tw-mb-2">{{ section.settings.overline }}</span>
+        {% endif %}
+
+        {% if section.settings.headline != blank %}
+          <h1 class="custom-hero__headline">{{ section.settings.headline }}</h1>
+        {% endif %}
+
+        {% if section.settings.description != blank %}
+          <p class="custom-hero__description tw-mb-4 h4">{{ section.settings.description }}</p>
+        {% endif %}
+
+        {% if section.settings.button_label != blank and section.settings.button_url != blank %}
+          <a 
+            href="{{ section.settings.button_url }}" 
+            class="custom-hero__button"
+            {% if section.settings.button_url contains 'http' %}
+              target="_blank" rel="noopener"
+            {% endif %}
+          >
+            {{ section.settings.button_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Hero",
+  "tag": "section",
+  "class": "custom-hero-wrapper section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "overline",
+      "label": "Overline",
+      "placeholder": "ALL NEW"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "placeholder": "PACE PRO PACKS"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "placeholder": "Bags designed for the modern professional"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "placeholder": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Desktop Media"
+    },
+    {
+      "type": "select",
+      "id": "desktop_media_type",
+      "label": "Desktop Media Type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop Image",
+      "info": "Recommended: 1920x1080px or larger"
+    },
+    {
+      "type": "select",
+      "id": "desktop_video_source",
+      "label": "Desktop Video Source",
+      "options": [
+        {
+          "value": "upload",
+          "label": "Upload Video"
+        },
+        {
+          "value": "file",
+          "label": "File URL"
+        }
+      ],
+      "default": "upload",
+      "visible_if": "{{ section.settings.desktop_media_type == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "desktop_video",
+      "label": "Desktop Video",
+      "visible_if": "{{ section.settings.desktop_media_type == 'video' and section.settings.desktop_video_source == 'upload' }}"
+    },
+    {
+      "type": "url",
+      "id": "desktop_video_file_url",
+      "label": "Desktop Video File URL",
+      "info": "Upload your video to Content > Files and paste the URL here",
+      "visible_if": "{{ section.settings.desktop_media_type == 'video' and section.settings.desktop_video_source == 'file' }}"
+    },
+    {
+      "type": "header",
+      "content": "Mobile Media"
+    },
+    {
+      "type": "select",
+      "id": "mobile_media_type",
+      "label": "Mobile Media Type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile Image",
+      "info": "Recommended: 750x1334px or larger"
+    },
+    {
+      "type": "select",
+      "id": "mobile_video_source",
+      "label": "Mobile Video Source",
+      "options": [
+        {
+          "value": "upload",
+          "label": "Upload Video"
+        },
+        {
+          "value": "file",
+          "label": "File URL"
+        }
+      ],
+      "default": "upload",
+      "visible_if": "{{ section.settings.mobile_media_type == 'video' }}"
+    },
+    {
+      "type": "video",
+      "id": "mobile_video",
+      "label": "Mobile Video",
+      "visible_if": "{{ section.settings.mobile_media_type == 'video' and section.settings.mobile_video_source == 'upload' }}"
+    },
+    {
+      "type": "url",
+      "id": "mobile_video_file_url",
+      "label": "Mobile Video File URL",
+      "info": "Upload your video to Content > Files and paste the URL here",
+      "visible_if": "{{ section.settings.mobile_media_type == 'video' and section.settings.mobile_video_source == 'file' }}"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "invert_colors",
+      "label": "Invert Colors",
+      "info": "Switch from light text on dark background to dark text on light background",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Hero",
+      "category": "Banners",
+      "settings": {
+        "overline": "ALL NEW",
+        "headline": "PACE PRO PACKS",
+        "description": "Bags designed for the modern professional",
+        "button_label": "Shop now",
+        "button_url": "/collections/all"
+      }
+    }
+  ]
+}
+{% endschema %}

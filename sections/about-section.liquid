@@ -1,0 +1,209 @@
+{% stylesheet %}
+  .vinyl-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    background-color: transparent;
+    padding-top: 2em !important;
+  }
+
+  .vinyl-section__column {
+    border: 1px solid #000;
+    position: relative;
+    /* overflow: hidden; */
+  }
+
+  /* Left column - Vinyl */
+  .vinyl-section__vinyl-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 600px;
+    overflow: hidden;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .vinyl-section__vinyl-wrapper {
+    position: absolute;
+    left: -0%;
+    bottom: 0%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 800px;
+    animation: vinyl-rotate var(--rotation-speed, 30s) linear infinite;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
+  /* Right column - Content */
+  .vinyl-section__content-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    text-align: center;
+  }
+
+  .vinyl-section__heading {
+    margin: 0 0 40px 0;
+    font-family: var(--font-header);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #000;
+  }
+
+  .vinyl-section__button {
+    width: 100%;
+    background-color: var(--color-contrast-higher);
+    color: var(--color-bg);
+    padding: 18px 50px;
+    text-decoration: none;
+    font-family: var(--font-button);
+    font-weight: var(--font-weight-medium);
+    font-size: 15px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .vinyl-section__button:hover {
+    background-color: #333;
+  }
+
+  /* Mobile styles */
+  @media screen and (max-width: 749px) {
+    .vinyl-section {
+      grid-template-columns: 1fr;
+    }
+
+    /* Invert column order on mobile */
+    .vinyl-section__vinyl-column {
+      min-height: 400px;
+      border-bottom: 1px solid #000;
+      grid-row: 2;
+    }
+
+    .vinyl-section__content-column {
+      padding: 40px 20px;
+      grid-row: 1;
+      border-bottom: 1px solid #000;
+    }
+
+    .vinyl-section__vinyl-wrapper {
+      left: -5% !important;
+      width: 110%;
+    }
+  }
+
+  /* Reduce motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .vinyl-section__vinyl-wrapper {
+      animation: none;
+    }
+  }
+{% endstylesheet %}
+
+<section class="vinyl-section" style="--rotation-speed: {{ section.settings.rotation_speed }}s;">
+  <!-- Left Column - Vinyl -->
+  <div class="vinyl-section__column vinyl-section__vinyl-column"
+  
+  style="background-image: url('{% if section.settings.vinyl_image != blank %}{{ section.settings.vinyl_image | image_url: width: 1300 }}{% else %}{{ 'vinyl-disk.png' | asset_url }}{% endif %}');"
+  role="img"
+  aria-label="{{ section.settings.vinyl_alt_text | default: section.settings.vinyl_image.alt | default: 'Rotating vinyl disk' }}"
+  >
+
+  </div>
+
+  <!-- Right Column - Content -->
+  <div class="vinyl-section__column vinyl-section__content-column">
+    {% if section.settings.heading != blank %}
+      <h2 class="vinyl-section__heading">{{ section.settings.heading }}</h2>
+    {% endif %}
+    
+    {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+      <a href="{{ section.settings.button_link }}" class="vinyl-section__button">
+        {{ section.settings.button_label }}
+      </a>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About Section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "OUR STORY"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Image Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "vinyl_image",
+      "label": "Rotating Image",
+      "info": "Select an image to display in the rotating section. If no image is selected, the default vinyl disk will be used."
+    },
+    {
+      "type": "text",
+      "id": "vinyl_alt_text",
+      "label": "Image Alt Text"
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "label": "Rotation Speed (seconds)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 30,
+      "info": "Time for one full rotation"
+    },
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full Width",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Section",
+      "category": "Media"
+    }
+  ]
+}
+{% endschema %}
