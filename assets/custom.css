@@ -22,6 +22,7 @@
   --spacing-sm: 12px;
 
   --font-h1--size: 70px !important;
+  --font-h2--size: 30px !important;
   --font-h4--size: 25px !important;
   --font-h5--size: 18px !important;
   --font-paragraph--size: 14px !important;
@@ -882,4 +883,8 @@ footer h2 {
 
 summary {
   display: flex !important;
+}
+
+.product-information {
+  margin-top: 4em;
 }

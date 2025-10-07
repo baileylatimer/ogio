@@ -1,0 +1,72 @@
+{% stylesheet %}
+  .customize-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 16px;
+    background: transparent;
+    border: 1px solid #000;
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-regular);
+    color: #000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: var(--height-buy-buttons);
+    min-height: var(--minimum-touch-target);
+  }
+
+  .customize-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .customize-button__icon {
+    width: 33px;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .customize-button__text {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-regular);
+    margin: 0;
+  }
+
+  /* Mobile adjustments */
+  @media screen and (max-width: 749px) {
+    .customize-button {
+      padding: 10px 14px;
+      font-size: 15px;
+    }
+    
+    .customize-button__icon {
+      width: 28px;
+    }
+    
+    .customize-button__text {
+      font-size: 15px;
+    }
+  }
+{% endstylesheet %}
+
+<button class="customize-button" {{ block.shopify_attributes }}>
+  <img src="{{ 'customize-icon.png' | asset_url }}" class="customize-button__icon" width="33" height="33" alt="Customize icon">
+  <span class="customize-button__text">Customize</span>
+</button>
+
+{% schema %}
+{
+  "name": "Customize",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Customize Button"
+    },
+    {
+      "type": "paragraph",
+      "content": "This button allows customers to customize the product. It appears automatically in the Buy Buttons section."
+    }
+  ]
+}
+{% endschema %}
