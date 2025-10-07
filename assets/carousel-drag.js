@@ -46,11 +46,22 @@ class CarouselDrag {
   }
 
   calculateTrackWidth() {
-    const firstSet = Array.from(this.track.children).slice(0, this.track.children.length / 2);
+    // Find original blocks (those without aria-hidden="true")
+    const originalBlocks = Array.from(this.track.children).filter(child => 
+      !child.hasAttribute('aria-hidden')
+    );
     const gap = parseFloat(window.getComputedStyle(this.track).gap) || 0;
-    this.trackWidth = firstSet.reduce((width, child, index) => {
-      return width + child.offsetWidth + (index < firstSet.length - 1 ? gap : 0);
+    this.singleSetWidth = originalBlocks.reduce((width, child, index) => {
+      return width + child.offsetWidth + (index < originalBlocks.length - 1 ? gap : 0);
     }, 0);
+    
+    // Calculate how many sets we need for seamless scrolling
+    const viewportWidth = window.innerWidth;
+    const minContentWidth = viewportWidth * 3; // Ensure 3x viewport width
+    this.setsNeeded = Math.max(3, Math.ceil(minContentWidth / this.singleSetWidth));
+    
+    // Total track width is single set width * number of sets
+    this.trackWidth = this.singleSetWidth;
   }
 
   addEventListeners() {
@@ -153,14 +164,17 @@ class CarouselDrag {
         this.currentX -= this.animationSpeed * deltaTime / 16;
       }
       
-      // Reset position when scrolled one set width
-      if (Math.abs(this.currentX) >= this.trackWidth) {
-        this.isResetting = true;
+      // Seamless infinite loop reset
+      // When we've scrolled one full set width, reset to equivalent position
+      if (this.currentX <= -this.singleSetWidth) {
+        // Move back by one set width to show equivalent content
+        // This creates invisible reset because content is identical
+        this.track.classList.add('no-transition');
+        this.currentX += this.singleSetWidth;
+        this.updateTransform();
+        // Remove no-transition on next frame
         requestAnimationFrame(() => {
-          this.track.classList.add('no-transition');
-          this.currentX = 0;
-          this.updateTransform();
-          this.isResetting = false;
+          this.track.classList.remove('no-transition');
         });
       }
       
