@@ -789,6 +789,10 @@ header {
   border-bottom: 1px solid var(--color-contrast-higher);
 }
 
+.header-logo[data-hidden-on-home-page] {
+  display: flex !important;
+}
+
 
 .menu-list__link-title {
   font-weight: 500;
