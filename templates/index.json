@@ -16,6 +16,7 @@
         "mobile_media_type": "image",
         "mobile_video_source": "upload",
         "mobile_video_file_url": "",
+        "show_gradient_overlay": true,
         "invert_colors": false
       }
     },

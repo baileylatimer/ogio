@@ -1,0 +1,142 @@
+{% stylesheet %}
+  .custom-shipping {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .custom-shipping__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 21px;
+    margin-top: 2px;
+  }
+
+  .custom-shipping__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .custom-shipping__headline {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+    margin: 0;
+    color: #000;
+  }
+
+  .custom-shipping__subtext {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-regular);
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
+    color: #666;
+  }
+
+  .custom-shipping__link {
+    color: #666;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .custom-shipping__link:hover {
+    color: #000;
+  }
+
+  /* Mobile adjustments */
+  @media screen and (max-width: 749px) {
+    .custom-shipping {
+      padding: 14px 16px;
+      margin: 12px 0;
+    }
+
+    .custom-shipping__headline {
+      font-size: 15px;
+    }
+
+    .custom-shipping__subtext {
+      font-size: 13px;
+    }
+  }
+{% endstylesheet %}
+
+<script>
+  // Calculate delivery date (current date + 3 business days)
+  function calculateDeliveryDate() {
+    const today = new Date();
+    let deliveryDate = new Date(today);
+    let daysAdded = 0;
+    
+    while (daysAdded < 3) {
+      deliveryDate.setDate(deliveryDate.getDate() + 1);
+      // Skip weekends (Saturday = 6, Sunday = 0)
+      if (deliveryDate.getDay() !== 0 && deliveryDate.getDay() !== 6) {
+        daysAdded++;
+      }
+    }
+    
+    // Format as "Wednesday, April 23"
+    const options = { 
+      weekday: 'long', 
+      month: 'long', 
+      day: 'numeric' 
+    };
+    
+    return deliveryDate.toLocaleDateString('en-US', options);
+  }
+
+  // Update the delivery date when the DOM is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    const deliveryDateElement = document.querySelector('.js-delivery-date');
+    if (deliveryDateElement) {
+      deliveryDateElement.textContent = calculateDeliveryDate();
+    }
+  });
+</script>
+
+<div class="custom-shipping" {{ block.shopify_attributes }}>
+  <div class="custom-shipping__icon">
+    <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13.75 8.50828L6.25 4.18328M17.5 14.0084V7.34173C17.4997 7.04946 17.4225 6.76241 17.2763 6.50936C17.13 6.25633 16.9198 6.04621 16.6667 5.90006L10.8333 2.56673C10.5799 2.42045 10.2925 2.34344 9.99998 2.34344C9.70743 2.34344 9.42003 2.42045 9.16667 2.56673L3.33333 5.90006C3.08022 6.04619 2.86998 6.25632 2.72372 6.50936C2.57745 6.7624 2.5003 7.04946 2.5 7.34173V14.0084C2.5003 14.3007 2.57745 14.5877 2.72372 14.8408C2.86998 15.0938 3.08022 15.3039 3.33333 15.4501L9.16667 18.7834C9.42003 18.9297 9.70744 19.0067 10 19.0067C10.2926 19.0067 10.58 18.9297 10.8333 18.7834L16.6667 15.4501C16.9198 15.3039 17.13 15.0938 17.2763 14.8408C17.4225 14.5877 17.4997 14.3007 17.5 14.0084Z" stroke="black" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M2.7251 6.47504L10.0001 10.6834L17.2751 6.47504M10 19.075V10.675" stroke="black" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  
+  <div class="custom-shipping__content">
+    <p class="custom-shipping__headline">
+      Estimated delivery by <span class="js-delivery-date">Wednesday, April 23</span> to 90028
+    </p>
+    <p class="custom-shipping__subtext">
+      Free ground shipping over $75 and free returns. <span class="custom-shipping__link">View Options</span>
+    </p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Shipping",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Shipping Information"
+    },
+    {
+      "type": "paragraph",
+      "content": "This block displays estimated delivery dates and shipping information. The delivery date is automatically calculated as 3 business days from the current date."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Shipping",
+      "category": "t:categories.product",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}
