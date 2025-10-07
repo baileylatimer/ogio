@@ -216,6 +216,12 @@
               },
               "block_order": []
             },
+            "custom_affirm_BNWddp": {
+              "type": "custom-affirm",
+              "name": "Custom Affirm",
+              "settings": {},
+              "blocks": {}
+            },
             "custom_shipping_VEPTnW": {
               "type": "custom-shipping",
               "name": "Custom Shipping",
@@ -443,6 +449,7 @@
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
+            "custom_affirm_BNWddp",
             "custom_shipping_VEPTnW",
             "accordion_qmEfqi"
           ]
