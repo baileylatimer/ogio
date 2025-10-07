@@ -794,3 +794,11 @@ header {
   font-weight: 500;
   text-transform: none !important;
 }
+
+footer {
+  background-color: black;
+}
+
+footer h2 {
+ color: var(--color-bg) !important
+}

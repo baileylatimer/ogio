@@ -1,4 +1,39 @@
+{% stylesheet %}
+  /* Footer Notch SVG Positioning */
+  .footer-notch {
+    position: absolute;
+    display: block;
+    justify-content: center;
+    width: 290px;
+    top: -30px;
+    height: 32px;
+    z-index: 10;
+    pointer-events: none;
+    margin-bottom: 0;
+    left: 50%;
+    transform: translate(-50%);
 
+
+  }
+
+  .footer-notch__svg {
+    width: 290px;
+    height: 32px;
+    display: block;
+  }
+
+  /* Hide notch on mobile for cleaner design */
+  @media screen and (width < 750px) {
+    .footer-notch {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+<!-- Footer Notch SVG -->
+<div class="footer-notch">
+  {{ 'footer-notch.svg' | asset_url | img_tag: '', class: 'footer-notch__svg' }}
+</div>
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
 <div
