@@ -2,13 +2,6 @@
   "type": "footer",
   "name": "Footer",
   "sections": {
-    "v2_footer_WjwLFh": {
-      "type": "v2-footer",
-      "name": "V2 Footer",
-      "settings": {
-        "color_scheme": ""
-      }
-    },
     "footer": {
       "type": "footer",
       "blocks": {
@@ -305,7 +298,6 @@
     }
   },
   "order": [
-    "v2_footer_WjwLFh",
     "footer"
   ]
 }

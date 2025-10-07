@@ -32,6 +32,18 @@
     overflow: hidden;
   }
 
+  .category-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 215px;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.90) 0%, rgba(0, 0, 0, 0.00) 100%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
   .category-card__background {
     position: absolute;
     inset: 0;
@@ -51,13 +63,8 @@
   }
 
   .category-card__headline {
-    font-family: var(--font-header);
-    font-weight: var(--font-weight-medium);
-    font-size: clamp(24px, 4vw, 32px);
-    line-height: 1.2;
-    text-transform: uppercase;
     margin: 0;
-    max-width: 300px;
+    max-width: 370px;
   }
 
   .category-card__button {
@@ -149,7 +156,7 @@
           assign has_background_image = true
         endif
 
-        assign card_classes = 'category-card'
+        assign card_classes = 'category-card tw-p-6'
         if block.settings.invert_colors
           assign card_classes = card_classes | append: ' category-card--inverted'
         endif
