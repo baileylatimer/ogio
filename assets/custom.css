@@ -696,6 +696,84 @@ media-gallery .product-media-container, .cart-items__media-image {
   -o-border-radius: 0 !important;
 }
 
+/* =============================================
+ * 7. REUSABLE BEVELED CORNER SYSTEM
+ * ============================================= */
+
+/* Base bevel corner - creates refined diagonal cuts (small horizontal, subtle vertical) */
+.bevel-corner-tl {
+  clip-path: polygon(0 10%, 5% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.bevel-corner-tr {
+  clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%);
+}
+
+.bevel-corner-bl {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 90%);
+}
+
+.bevel-corner-br {
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
+}
+
+/* Grid auto-application for categories */
+.bevel-grid {
+  /* Apply corner bevels automatically based on grid position */
+}
+
+/* Desktop: 2x2 grid corner logic */
+@media screen and (min-width: 750px) {
+  .bevel-grid .category-card:nth-child(4n-3) {
+    /* Position 1, 5: Top-left */
+    clip-path: polygon(0 10%, 5% 0, 100% 0, 100% 100%, 0 100%);
+  }
+  
+  .bevel-grid .category-card:nth-child(4n-2) {
+    /* Position 2, 6: Top-right */
+    clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%);
+  }
+  
+  .bevel-grid .category-card:nth-child(4n-1) {
+    /* Position 3, 7: Bottom-left */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 90%);
+  }
+  
+  .bevel-grid .category-card:nth-child(4n) {
+    /* Position 4, 8: Bottom-right */
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
+  }
+}
+
+/* Mobile: Single column - first and last only */
+@media screen and (max-width: 749px) {
+  .bevel-grid .category-card:first-child {
+    /* First card: Both top corners */
+    clip-path: polygon(5% 0, 95% 0, 100% 10%, 100% 100%, 0 100%, 0 10%);
+  }
+  
+  .bevel-grid .category-card:last-child:not(:first-child) {
+    /* Last card: Both bottom corners */
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 5% 100%, 0 90%);
+  }
+  
+  .bevel-grid .category-card:not(:first-child):not(:last-child) {
+    /* Middle cards: No bevels */
+    clip-path: none;
+  }
+  
+  /* If only one card, give it all four corners */
+  .bevel-grid .category-card:first-child:last-child {
+    clip-path: polygon(5% 0, 95% 0, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0 90%, 0 10%);
+  }
+}
+
+/* Utility classes for manual application */
+.bevel-tl { clip-path: polygon(0 10%, 5% 0, 100% 0, 100% 100%, 0 100%); }
+.bevel-tr { clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%); }
+.bevel-bl { clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 90%); }
+.bevel-br { clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%); }
+
 
 .product-card p {
   font-size: var(--font-h5--size) !important;
