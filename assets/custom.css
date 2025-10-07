@@ -806,3 +806,12 @@ footer {
 footer h2 {
  color: var(--color-bg) !important
 }
+
+.email-signup__input {
+  background-color: transparent !important;
+  border-radius: 0 !important;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -ms-border-radius: 0 !important;
+  -o-border-radius: 0 !important;
+}
