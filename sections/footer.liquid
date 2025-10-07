@@ -22,9 +22,22 @@
     display: block;
   }
 
-  /* Hide notch on mobile for cleaner design */
+  /* Footer Logo Positioning */
+  .footer-logo {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 15;
+    width: 190px;
+    height: auto;
+    pointer-events: none;
+  }
+
+  /* Hide notch and logo on mobile for cleaner design */
   @media screen and (width < 750px) {
-    .footer-notch {
+    .footer-notch,
+    .footer-logo {
       display: none;
     }
   }
@@ -33,6 +46,11 @@
 <!-- Footer Notch SVG -->
 <div class="footer-notch">
   {{ 'footer-notch.svg' | asset_url | img_tag: '', class: 'footer-notch__svg' }}
+</div>
+
+<!-- Footer Logo -->
+<div class="footer-logo">
+  <img src="https://cdn.shopify.com/s/files/1/0954/1091/3586/files/logo--white.png?v=1759853090" alt="OGIO Logo" class="footer-logo__image" width="190" height="auto" />
 </div>
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
