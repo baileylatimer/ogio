@@ -1,16 +1,25 @@
 {% stylesheet %}
   .custom-hero {
     position: relative;
-    min-height: 100vh;
     overflow: hidden;
   }
 
   .custom-hero__container {
     position: relative;
-    height: 100vh;
     display: flex;
     align-items: center;
     z-index: 2;
+  }
+
+  /* Desktop: Fixed height */
+  @media screen and (min-width: 750px) {
+    .custom-hero {
+      min-height: 630px;
+    }
+
+    .custom-hero__container {
+      height: 630px;
+    }
   }
 
   .custom-hero__media-wrapper {
@@ -127,7 +136,12 @@
 
   /* Mobile Styles */
   @media screen and (max-width: 749px) {
+    .custom-hero {
+      min-height: 100vh;
+    }
+
     .custom-hero__container {
+      height: 100vh;
       align-items: flex-end;
       padding-bottom: 40px;
     }

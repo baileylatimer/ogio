@@ -250,6 +250,11 @@
   {% endif %}
 </header-component>
 
+<!-- Header Notch SVG -->
+<div class="header-notch">
+  {{ 'header-notch.svg' | asset_url | img_tag: '', class: 'header-notch__svg' }}
+</div>
+
 <script
   src="{{ 'header.js' | asset_url }}"
   type="module"
@@ -573,6 +578,40 @@
     /* Make sticky content immediately stick to the top of the page */
     .sticky-content {
       margin-top: calc(var(--header-height) * -1);
+    }
+  }
+
+  /* Header Notch SVG Positioning */
+  .header-notch {
+    position: absolute;
+    top: 51px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    pointer-events: none;
+    width: 290px;
+    height: 24px;
+  }
+
+  .header-notch__svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .header-logo {
+    /* margin-top: -2px; */
+    position: absolute !important;
+    display: block;
+    top: 9px !important;
+}
+
+
+
+  /* Hide notch on mobile for cleaner design */
+  @media screen and (width < 750px) {
+    .header-notch {
+      display: none;
     }
   }
 {% endstylesheet %}

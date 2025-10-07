@@ -7,7 +7,7 @@
 
 
  :root {
-  --color-bg: #EDEAE4;
+  --color-bg: #F0F0F0;
   --color-contrast-high: #171717;
   --color-contrast-higher: #000;
   
@@ -783,4 +783,14 @@ letter-spacing: var(--font-h5--letter-spacing) !important;
 
 .section-resource-list__content a {
   display: none;
+}
+
+header {
+  border-bottom: 1px solid var(--color-contrast-higher);
+}
+
+
+.menu-list__link-title {
+  font-weight: 500;
+  text-transform: none !important;
 }

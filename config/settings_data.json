@@ -1,6 +1,6 @@
 {
   "current": {
-    "logo": "shopify:\/\/shop_images\/sunset-oil--logo.png",
+    "logo": "shopify:\/\/shop_images\/logo.png",
     "type_body_font": "inter_n4",
     "type_subheading_font": "inter_n5",
     "type_heading_font": "inter_n7",
@@ -71,7 +71,7 @@
     "color_schemes": {
       "scheme-1": {
         "settings": {
-          "background": "#edeae4",
+          "background": "#f0f0f0",
           "foreground_heading": "#28282a",
           "foreground": "#28282a",
           "primary": "#28282a",

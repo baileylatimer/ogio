@@ -1,0 +1,6 @@
+<svg width="290" height="24" viewBox="0 0 290 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Fill shape (entire notch with no stroke) -->
+<path d="M287.794 0.5L266.785 20.5781L266.777 20.5869C264.857 22.5115 261.929 23.4999 258.975 23.5H30.0664C27.1121 23.5 24.185 22.5114 22.2646 20.5869L22.2559 20.5781L1.24707 0.5H287.794Z" fill="#F0F0F0" stroke="none"/>
+<!-- Stroke shape (only bottom and sides, no top) -->
+<path d="M287.794 0.5L266.785 20.5781L266.777 20.5869C264.857 22.5115 261.929 23.4999 258.975 23.5H30.0664C27.1121 23.5 24.185 22.5114 22.2646 20.5869L22.2559 20.5781L1.24707 0.5" fill="none" stroke="black"/>
+</svg>
