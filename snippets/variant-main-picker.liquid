@@ -327,7 +327,21 @@
           assign swatch_count = product_option.values | map: 'swatch' | compact | size
           assign variant_style = block.settings.variant_style
 
+          # Override Shopify's broken swatch detection - force swatch mode for Color options
+          assign is_color_option = false
+          if product_option.name contains 'Color' or product_option.name contains 'color' or product_option.name contains 'Colour' or product_option.name contains 'colour'
+            assign is_color_option = true
+          endif
+
+          assign force_swatch = false
           if swatch_count > 0 and block.settings.show_swatches
+            assign force_swatch = true
+          endif
+          if is_color_option and block.settings.show_swatches
+            assign force_swatch = true
+          endif
+
+          if force_swatch
             if block.settings.variant_style == 'dropdown'
               assign variant_style = 'swatch_dropdown'
             else
@@ -381,8 +395,6 @@
                   {% liquid
                     assign featured_media = product_option_value.variant.featured_media
 
-                    # If the variant has no featured media, and we have a combined listing product, then fall back to
-                    # using the featured media of the child product that is linked to this option value.
                     if featured_media == blank and product_option_value.product_url
                       assign featured_media = product_option_value.variant.product.featured_media
                     endif
