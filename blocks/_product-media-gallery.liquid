@@ -17,6 +17,55 @@
     flex: inherit;
   }
 
+  /* Elite Performance: CSS-Driven Image Filtering */
+  .media-gallery {
+    /* Smooth transitions for professional UX */
+    --image-transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  /* Hide all images by default when a color is selected - use display: none to preserve bevel nth-child logic */
+  .media-gallery[data-selected-color] .media-gallery__grid li,
+  .media-gallery[data-selected-color] slideshow-slide {
+    display: none;
+  }
+
+  /* Show images that match the selected color with smooth transition */
+  .media-gallery[data-selected-color="black"] .media-gallery__grid li[data-color="Black"],
+  .media-gallery[data-selected-color="black"] slideshow-slide[data-slide-color="Black"] {
+    display: block;
+    animation: fadeInImage 0.15s ease;
+  }
+
+  .media-gallery[data-selected-color="navy"] .media-gallery__grid li[data-color="Navy"],
+  .media-gallery[data-selected-color="navy"] slideshow-slide[data-slide-color="Navy"] {
+    display: block;
+    animation: fadeInImage 0.15s ease;
+  }
+
+  .media-gallery[data-selected-color="orange"] .media-gallery__grid li[data-color="Orange"],
+  .media-gallery[data-selected-color="orange"] slideshow-slide[data-slide-color="Orange"] {
+    display: block;
+    animation: fadeInImage 0.15s ease;
+  }
+
+  /* Show all images when no specific color is selected */
+  .media-gallery:not([data-selected-color]) .media-gallery__grid li,
+  .media-gallery:not([data-selected-color]) slideshow-slide {
+    display: block;
+  }
+
+  /* Smooth fade-in animation for newly shown images */
+  @keyframes fadeInImage {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media screen and (width < 750px) {
     .dialog-zoomed-gallery {
       /* Prevent scroll wheel or swipe scrolling */
@@ -288,15 +337,21 @@
       {% capture class %}
         product-media-container product-media-container--{{ media.media_type }}{% if block.settings.constrain_to_viewport %} constrain-height{% endif %}{% if block.settings.aspect_ratio != 'adapt' %} media-fit{% endif %}{% if block.settings.zoom %} product-media-container--zoomable{% endif %}
       {% endcapture %}
-      {% if block.settings.aspect_ratio == 'adapt' %}
-        {% capture style %}
+      {% capture style %}
+        {% if block.settings.aspect_ratio == 'adapt' %}
           --media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};
-        {% endcapture %}
-      {% endif %}
+        {% endif %}
+        {% comment %} Hide images that don't match selected variant color {% endcomment %}
+        {% if selected_product.selected_or_first_available_variant.featured_media.alt != blank and media.alt != selected_product.selected_or_first_available_variant.featured_media.alt and media.alt != blank %}
+          display: none;
+        {% endif %}
+      {% endcapture %}
       {% if block.settings.zoom and media.media_type == 'model' %}
-        {%- capture attributes -%}"{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
+        {%- capture attributes -%}data-slide-color="{{ media.alt | default: '' }}"{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
       {% elsif block.settings.zoom %}
-        {%- capture attributes -%}on:click="#zoom-dialog-{{ block.id }}/open/{{ forloop.index0 }}"{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
+        {%- capture attributes -%}data-slide-color="{{ media.alt | default: '' }}" on:click="#zoom-dialog-{{ block.id }}/open/{{ forloop.index0 }}"{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
+      {% else %}
+        {%- capture attributes -%}data-slide-color="{{ media.alt | default: '' }}"{% if settings.transition_to_main_product and forloop.first %} data-view-transition-type="product-image-transition"{% endif %}{% endcapture -%}
       {% endif %}
 
       {% render 'slideshow-slide',
@@ -356,7 +411,8 @@
 
   {% if block.settings.media_presentation == 'grid' %}
     <ul
-      class="media-gallery__grid bevel-grid list-unstyled"
+      class="media-gallery__grid bevel-grid list-unstyled parentul-main"
+      data-main-color="{{ selected_product.selected_or_first_available_variant.featured_media.alt | default: '' }}"
       data-testid="media-gallery-grid"
     >
       {% for media in sorted_media %}
@@ -368,7 +424,14 @@
             {%- if block.settings.constrain_to_viewport %} constrain-height{% endif %}
             {%- if block.settings.aspect_ratio != 'adapt' %} media-fit{% endif %}
           "
-          style="{% if block.settings.aspect_ratio == 'adapt' %} --media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};{% endif %}"
+          style="
+            {% if block.settings.aspect_ratio == 'adapt' %} --media-preview-ratio: {{ media.preview_image.aspect_ratio | default: 1.0 }};{% endif %}
+            {% comment %} Hide images that don't match selected variant color {% endcomment %}
+            {% if selected_product.selected_or_first_available_variant.featured_media.alt != blank and media.alt != selected_product.selected_or_first_available_variant.featured_media.alt and media.alt != blank %}
+              display: none;
+            {% endif %}
+          "
+          data-color="{{ media.alt | default: '' }}"
           {% if settings.transition_to_main_product and forloop.first %}
             data-view-transition-type="product-image-transition"
           {% endif %}
@@ -523,6 +586,63 @@
       window.ProductModel.loadShopifyXR();
     </script>
   {%- endif -%}
+
+  <script>
+    // Elite Performance: CSS-Driven Image Filtering
+    document.addEventListener('DOMContentLoaded', function() {
+      const mediaGallery = document.querySelector('media-gallery[data-presentation]');
+      if (!mediaGallery) return;
+
+      // Elite-level function: Single data attribute update, CSS handles the rest
+      function updateImageFilter(selectedColor) {
+        if (!selectedColor) {
+          // Remove filter - show all images
+          mediaGallery.removeAttribute('data-selected-color');
+          return;
+        }
+        
+        // Instant update: CSS transitions handle the visual changes
+        const normalizedColor = selectedColor.toLowerCase().trim();
+        mediaGallery.dataset.selectedColor = normalizedColor;
+      }
+
+      // Get selected color from variant picker
+      function getSelectedColor() {
+        const variantPicker = document.querySelector('variant-picker');
+        if (!variantPicker) return null;
+        
+        // Try selected option first
+        const colorOption = variantPicker.querySelector('fieldset input:checked');
+        if (colorOption) return colorOption.value;
+        
+        // Fallback to variant data
+        try {
+          const productData = variantPicker.querySelector('script[type="application/json"]');
+          if (productData) {
+            const variant = JSON.parse(productData.textContent);
+            return variant?.featured_media?.alt;
+          }
+        } catch (e) {
+          // Silent fallback
+        }
+        
+        return null;
+      }
+
+      // Instant event handling - no delays, no loops
+      document.addEventListener('variant:update', function(event) {
+        const variant = event.detail.variant;
+        const color = variant?.featured_media?.alt || getSelectedColor();
+        updateImageFilter(color);
+      });
+
+      document.addEventListener('change', function(event) {
+        if (event.target.closest('variant-picker')) {
+          updateImageFilter(event.target.value);
+        }
+      });
+    });
+  </script>
 </media-gallery>
 
 {% schema %}

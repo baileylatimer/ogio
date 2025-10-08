@@ -779,52 +779,52 @@ media-gallery .product-media-container, .cart-items__media-image {
 /* Two-column grid layout for product images */
 @media screen and (min-width: 750px) {
   /* 4 Images: All corners occupied */
-  .media-gallery__grid.bevel-grid:has(.product-media-container:nth-child(4):last-child) {
-    .product-media-container:nth-child(1) {
+  .media-gallery__grid.bevel-grid:has(li:nth-child(4):last-child) {
+    li:nth-child(1) {
       /* Position 1: Top-left */
       clip-path: polygon(0 10%, 5% 0, 100% 0, 100% 100%, 0 100%);
     }
     
-    .product-media-container:nth-child(2) {
+    li:nth-child(2) {
       /* Position 2: Top-right */
       clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%);
     }
     
-    .product-media-container:nth-child(3) {
+    li:nth-child(3) {
       /* Position 3: Bottom-left */
       clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 90%);
     }
     
-    .product-media-container:nth-child(4) {
+    li:nth-child(4) {
       /* Position 4: Bottom-right */
       clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
     }
   }
 
   /* 6 Images: Only outer corners (positions 3,4 get nothing) */
-  .media-gallery__grid.bevel-grid:has(.product-media-container:nth-child(6):last-child) {
-    .product-media-container:nth-child(1) {
+  .media-gallery__grid.bevel-grid:has(li:nth-child(6):last-child) {
+    li:nth-child(1) {
       /* Position 1: Top-left */
       clip-path: polygon(0 10%, 5% 0, 100% 0, 100% 100%, 0 100%);
     }
     
-    .product-media-container:nth-child(2) {
+    li:nth-child(2) {
       /* Position 2: Top-right */
       clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%);
     }
     
-    .product-media-container:nth-child(3),
-    .product-media-container:nth-child(4) {
+    li:nth-child(3),
+    li:nth-child(4) {
       /* Positions 3,4: No bevels */
       clip-path: none;
     }
     
-    .product-media-container:nth-child(5) {
+    li:nth-child(5) {
       /* Position 5: Bottom-left */
       clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 90%);
     }
     
-    .product-media-container:nth-child(6) {
+    li:nth-child(6) {
       /* Position 6: Bottom-right */
       clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
     }
@@ -833,7 +833,7 @@ media-gallery .product-media-container, .cart-items__media-image {
 
 /* Mobile: No bevels for cleaner single-column layout */
 @media screen and (max-width: 749px) {
-  .media-gallery__grid.bevel-grid .product-media-container {
+  .media-gallery__grid.bevel-grid li {
     clip-path: none;
   }
 }
