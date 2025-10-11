@@ -776,58 +776,28 @@ media-gallery .product-media-container, .cart-items__media-image {
 .bevel-br { clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%); }
 
 /* Media Gallery Beveled Corners */
-/* Two-column grid layout for product images */
-@media screen and (min-width: 750px) {
-  /* 4 Images: All corners occupied */
-  .media-gallery__grid.bevel-grid:has(li:nth-child(4):last-child) {
-    li:nth-child(1) {
-      /* Position 1: Top-left */
-      clip-path: polygon(0 10%, 5% 0, 100% 0, 100% 100%, 0 100%);
-    }
-    
-    li:nth-child(2) {
-      /* Position 2: Top-right */
-      clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%);
-    }
-    
-    li:nth-child(3) {
-      /* Position 3: Bottom-left */
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 90%);
-    }
-    
-    li:nth-child(4) {
-      /* Position 4: Bottom-right */
-      clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
-    }
-  }
+/* Dynamic bevel classes applied via JavaScript for cross-variant compatibility */
 
-  /* 6 Images: Only outer corners (positions 3,4 get nothing) */
-  .media-gallery__grid.bevel-grid:has(li:nth-child(6):last-child) {
-    li:nth-child(1) {
-      /* Position 1: Top-left */
-      clip-path: polygon(0 10%, 5% 0, 100% 0, 100% 100%, 0 100%);
-    }
-    
-    li:nth-child(2) {
-      /* Position 2: Top-right */
-      clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%);
-    }
-    
-    li:nth-child(3),
-    li:nth-child(4) {
-      /* Positions 3,4: No bevels */
-      clip-path: none;
-    }
-    
-    li:nth-child(5) {
-      /* Position 5: Bottom-left */
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 90%);
-    }
-    
-    li:nth-child(6) {
-      /* Position 6: Bottom-right */
-      clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
-    }
+@media screen and (min-width: 750px) {
+  /* Dynamic bevel classes - applied to visible images regardless of DOM position */
+  .media-gallery__grid.bevel-grid li.bevel-tl {
+    /* Top-left bevel */
+    clip-path: polygon(0 10%, 5% 0, 100% 0, 100% 100%, 0 100%);
+  }
+  
+  .media-gallery__grid.bevel-grid li.bevel-tr {
+    /* Top-right bevel */
+    clip-path: polygon(0 0, 95% 0, 100% 10%, 100% 100%, 0 100%);
+  }
+  
+  .media-gallery__grid.bevel-grid li.bevel-bl {
+    /* Bottom-left bevel */
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 90%);
+  }
+  
+  .media-gallery__grid.bevel-grid li.bevel-br {
+    /* Bottom-right bevel */
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 95% 100%, 0 100%);
   }
 }
 

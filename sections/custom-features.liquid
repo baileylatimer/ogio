@@ -1,0 +1,424 @@
+{% comment %}
+  Custom Features Section
+  Interactive product feature showcase with background images and progress navigation
+  Supports 1-6 features via Meta Objects
+{% endcomment %}
+
+{% stylesheet %}
+  .custom-features {
+    /* Base container styles */
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Desktop: Beveled corners */
+  @media screen and (min-width: 750px) {
+    .custom-features {
+      clip-path: polygon(5% 0, 95% 0, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0 90%, 0 10%);
+      margin: 0 var(--spacing-lg);
+    }
+  }
+
+  /* Background image container */
+  .custom-features__background {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.4s ease-out;
+  }
+
+  .custom-features__background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Hide inactive backgrounds */
+  .custom-features__background:not(.active) {
+    opacity: 0;
+  }
+
+  .custom-features__background.active {
+    opacity: 1;
+  }
+
+  /* Gradient overlay for content legibility */
+  .custom-features__gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 250px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    z-index: 2;
+  }
+
+  /* Content positioning */
+  .custom-features__content {
+    position: relative;
+    z-index: 10;
+    color: var(--color-bg);
+  }
+
+  /* Progress bar styles */
+  .custom-features__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+  }
+
+  .custom-features__progress-bar {
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .custom-features__progress-fill {
+    height: 100%;
+    background-color: var(--color-bg);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  .custom-features__progress-bar:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Labels for desktop */
+  .custom-features__labels {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .custom-features__labels {
+      display: block;
+      position: absolute;
+      bottom: 30px;
+      left: 0;
+      right: 0;
+      z-index: 25;
+    }
+
+    .custom-features__label {
+      position: absolute;
+      color: var(--color-bg);
+      font-size: 14px;
+      font-weight: var(--font-weight-regular);
+      transform: translateX(-50%);
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .custom-features__label:hover {
+      opacity: 0.8;
+    }
+  }
+
+  /* Content animations */
+  .custom-features__content-inner {
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .custom-features__content-inner.active {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* Pause indicator */
+  .custom-features.paused .custom-features__progress-fill {
+    animation-play-state: paused;
+  }
+{% endstylesheet %}
+
+{%- liquid
+  # BULLETPROOF PRODUCT DETECTION
+  # Priority: 1. Section setting, 2. Template product, 3. Fallback to any product
+  assign target_product = section.settings.product
+  if target_product == blank
+    assign target_product = product
+  endif
+  
+  # CHATGPT RESEARCH SOLUTION: Use .value to get resolved MetaobjectDrop objects
+  assign features = null
+  assign features_count = 0
+  
+  if target_product != blank
+    # This is the key: .value should return resolved objects, not GIDs
+    assign features = target_product.metafields.custom.product_features.value
+    if features != blank
+      # WORKAROUND: .size is broken on MetaobjectListDrop, use manual count
+      for feature in features
+        assign features_count = features_count | plus: 1
+      endfor
+    endif
+  endif
+  
+  # SAFE COUNT HANDLING - if still 0, just check if features exist
+  if features_count == blank or features_count == 0
+    if features != blank
+      assign features_count = 1
+    else
+      assign features_count = 0
+    endif
+  endif
+  
+  if features_count > 6
+    assign features_count = 6
+  endif
+-%}
+
+{% if features_count > 0 %}
+  <section 
+    class="custom-features tw-relative tw-w-full tw-h-screen tw-overflow-hidden"
+    data-features-count="{{ features_count }}"
+    data-autoplay-interval="1500"
+    {{ section.shopify_attributes }}
+  >
+    <!-- Background Images -->
+    {% for feature in features limit: 6 %}
+      {% if feature.image %}
+        <div 
+          class="custom-features__background{% if forloop.first %} active{% endif %}"
+          data-feature-index="{{ forloop.index0 }}"
+        >
+          {{
+            feature.image
+            | image_url: width: 1920
+            | image_tag:
+              loading: 'lazy',
+              sizes: '100vw',
+              widths: '768, 1024, 1366, 1920, 2560',
+              alt: feature.title
+          }}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <!-- Gradient Overlay -->
+    <div class="custom-features__gradient"></div>
+
+    <!-- Content -->
+    <div class="custom-features__content tw-flex tw-flex-col tw-justify-end tw-h-full tw-p-8 tw-max-w-4xl">
+      {% for feature in features limit: 6 %}
+        <div 
+          class="custom-features__content-inner{% if forloop.first %} active{% endif %}"
+          data-feature-index="{{ forloop.index0 }}"
+        >
+          {% if feature.title %}
+            <h2 class="tw-mb-4">{{ feature.title }}</h2>
+          {% endif %}
+          {% if feature.description %}
+            <p class="tw-mb-8 tw-max-w-2xl">{{ feature.description }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Progress Navigation -->
+    <div class="custom-features__progress tw-p-8">
+      <!-- Progress Bars -->
+      <div class="tw-flex tw-gap-1 tw-mb-4">
+        {% for feature in features limit: 6 %}
+          <div 
+            class="custom-features__progress-bar tw-flex-1"
+            data-feature-index="{{ forloop.index0 }}"
+            style="width: {{ 100.0 | divided_by: features_count }}%"
+          >
+            <div class="custom-features__progress-fill"></div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Labels (Desktop Only) -->
+      <div class="custom-features__labels">
+        {% for feature in features limit: 6 %}
+          {% if feature.label %}
+            <span 
+              class="custom-features__label"
+              data-feature-index="{{ forloop.index0 }}"
+              style="left: {{ forloop.index0 | times: 100.0 | divided_by: features_count | plus: 50.0 | divided_by: features_count }}%"
+            >
+              {{ feature.label }}
+            </span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Custom Features Auto-play and Navigation
+    document.addEventListener('DOMContentLoaded', function() {
+      const section = document.querySelector('.custom-features');
+      if (!section) return;
+
+      const featuresCount = parseInt(section.dataset.featuresCount);
+      const autoplayInterval = parseInt(section.dataset.autoplayInterval);
+      
+      let currentIndex = 0;
+      let autoplayTimer = null;
+      let progressTimer = null;
+      let isPaused = false;
+
+      // Get all elements
+      const backgrounds = section.querySelectorAll('.custom-features__background');
+      const contents = section.querySelectorAll('.custom-features__content-inner');
+      const progressBars = section.querySelectorAll('.custom-features__progress-bar');
+      const progressFills = section.querySelectorAll('.custom-features__progress-fill');
+      const labels = section.querySelectorAll('.custom-features__label');
+
+      // Switch to specific feature
+      function switchToFeature(index) {
+        if (index === currentIndex) return;
+
+        // Update backgrounds
+        backgrounds.forEach((bg, i) => {
+          bg.classList.toggle('active', i === index);
+        });
+
+        // Update content with slide animation
+        contents.forEach((content, i) => {
+          content.classList.toggle('active', i === index);
+        });
+
+        // Reset all progress bars
+        progressFills.forEach(fill => {
+          fill.style.width = '0%';
+        });
+
+        currentIndex = index;
+        startProgress();
+      }
+
+      // Start progress animation for current feature
+      function startProgress() {
+        if (progressTimer) clearInterval(progressTimer);
+        
+        const currentFill = progressFills[currentIndex];
+        if (!currentFill) return;
+
+        let progress = 0;
+        const increment = 100 / (autoplayInterval / 10); // Update every 10ms
+
+        progressTimer = setInterval(() => {
+          if (isPaused) return;
+
+          progress += increment;
+          currentFill.style.width = progress + '%';
+
+          if (progress >= 100) {
+            clearInterval(progressTimer);
+            // Auto-advance to next feature
+            const nextIndex = (currentIndex + 1) % featuresCount;
+            switchToFeature(nextIndex);
+          }
+        }, 10);
+      }
+
+      // Pause/Resume functionality
+      function pause() {
+        isPaused = true;
+        section.classList.add('paused');
+      }
+
+      function resume() {
+        isPaused = false;
+        section.classList.remove('paused');
+      }
+
+      // Event listeners for progress bars
+      progressBars.forEach((bar, index) => {
+        bar.addEventListener('click', () => {
+          pause();
+          switchToFeature(index);
+          // Resume after 3 seconds
+          setTimeout(resume, 3000);
+        });
+      });
+
+      // Event listeners for labels (desktop)
+      labels.forEach((label, index) => {
+        label.addEventListener('click', () => {
+          pause();
+          switchToFeature(index);
+          // Resume after 3 seconds
+          setTimeout(resume, 3000);
+        });
+      });
+
+      // Pause on hover/touch
+      section.addEventListener('mouseenter', pause);
+      section.addEventListener('mouseleave', resume);
+      section.addEventListener('touchstart', pause);
+      section.addEventListener('touchend', () => {
+        setTimeout(resume, 2000);
+      });
+
+      // Initialize
+      startProgress();
+    });
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom Features",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Features are managed through Product Meta Fields"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add features using the 'custom.product_features' meta field on your product. Each feature should include a title, description, label, and image."
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product",
+      "info": "Select the product whose features should be displayed"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end", 
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Features",
+      "settings": {
+        "product": "{{ product }}"
+      }
+    }
+  ]
+}
+{% endschema %}

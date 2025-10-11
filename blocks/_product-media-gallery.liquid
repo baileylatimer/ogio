@@ -588,22 +588,66 @@
   {%- endif -%}
 
   <script>
-    // Elite Performance: CSS-Driven Image Filtering
+    // Elite Performance: CSS-Driven Image Filtering + Dynamic Bevel Management
     document.addEventListener('DOMContentLoaded', function() {
       const mediaGallery = document.querySelector('media-gallery[data-presentation]');
       if (!mediaGallery) return;
 
-      // Elite-level function: Single data attribute update, CSS handles the rest
+      // Apply dynamic bevel classes to visible images
+      function applyDynamicBevels() {
+        const gridContainer = mediaGallery.querySelector('.media-gallery__grid.bevel-grid');
+        if (!gridContainer) return;
+
+        // Get all grid items and reset bevel classes
+        const allItems = gridContainer.querySelectorAll('li');
+        allItems.forEach(item => {
+          item.classList.remove('bevel-tl', 'bevel-tr', 'bevel-bl', 'bevel-br');
+        });
+
+        // Get only visible items
+        const visibleItems = Array.from(allItems).filter(item => {
+          const computedStyle = window.getComputedStyle(item);
+          return computedStyle.display !== 'none';
+        });
+
+        // Apply bevels based on visual grid position (not DOM position)
+        visibleItems.forEach((item, visualIndex) => {
+          const position = visualIndex + 1; // 1-based position
+          
+          if (visibleItems.length === 4) {
+            // 4-image layout: All corners beveled
+            switch (position) {
+              case 1: item.classList.add('bevel-tl'); break; // Top-left
+              case 2: item.classList.add('bevel-tr'); break; // Top-right  
+              case 3: item.classList.add('bevel-bl'); break; // Bottom-left
+              case 4: item.classList.add('bevel-br'); break; // Bottom-right
+            }
+          } else if (visibleItems.length === 6) {
+            // 6-image layout: Only outer corners beveled
+            switch (position) {
+              case 1: item.classList.add('bevel-tl'); break; // Top-left
+              case 2: item.classList.add('bevel-tr'); break; // Top-right
+              case 5: item.classList.add('bevel-bl'); break; // Bottom-left  
+              case 6: item.classList.add('bevel-br'); break; // Bottom-right
+              // Positions 3,4 get no bevels
+            }
+          }
+        });
+      }
+
+      // Elite-level function: Single data attribute update + dynamic bevels
       function updateImageFilter(selectedColor) {
         if (!selectedColor) {
           // Remove filter - show all images
           mediaGallery.removeAttribute('data-selected-color');
-          return;
+        } else {
+          // Instant update: CSS transitions handle the visual changes
+          const normalizedColor = selectedColor.toLowerCase().trim();
+          mediaGallery.dataset.selectedColor = normalizedColor;
         }
         
-        // Instant update: CSS transitions handle the visual changes
-        const normalizedColor = selectedColor.toLowerCase().trim();
-        mediaGallery.dataset.selectedColor = normalizedColor;
+        // Apply bevels to newly visible images after CSS transition
+        setTimeout(() => applyDynamicBevels(), 20);
       }
 
       // Get selected color from variant picker
@@ -641,6 +685,9 @@
           updateImageFilter(event.target.value);
         }
       });
+
+      // Apply initial bevels on page load
+      applyDynamicBevels();
     });
   </script>
 </media-gallery>
