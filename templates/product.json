@@ -545,6 +545,30 @@
         "padding-block-end": 0
       }
     },
+    "custom_features_Y8Lcij": {
+      "type": "custom-features",
+      "name": "Custom Features",
+      "settings": {
+        "product": "{{ product }}",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "custom_comparison_Gnfwpm": {
+      "type": "custom-comparison",
+      "name": "Custom Comparison",
+      "settings": {
+        "heading": "Compare Bags",
+        "main_product": "{{ product }}",
+        "comparison_products": [
+          "pace-pro-hybrid-checked",
+          "vault-carry-on",
+          "pace-pro-hybrid-carry-on"
+        ],
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "product_recommendations_qggXJq": {
       "type": "product-recommendations",
       "blocks": {
@@ -747,20 +771,12 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
-    },
-    "custom_features_Y8Lcij": {
-      "type": "custom-features",
-      "name": "Custom Features",
-      "settings": {
-        "product": "{{ product }}",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
     }
   },
   "order": [
     "main",
     "custom_features_Y8Lcij",
+    "custom_comparison_Gnfwpm",
     "product_recommendations_qggXJq"
   ]
 }

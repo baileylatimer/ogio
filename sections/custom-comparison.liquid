@@ -1,0 +1,567 @@
+{% comment %}
+  Custom Product Comparison Section
+  Displays up to 4 products in a responsive comparison table
+  Uses Product Comparison Specs meta objects for standardized comparison data
+{% endcomment %}
+
+{% stylesheet %}
+  .custom-comparison {
+    /* Base container styles */
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* Desktop: Full table layout */
+  @media screen and (min-width: 750px) {
+    .custom-comparison {
+      clip-path: polygon(5% 0, 95% 0, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0 90%, 0 10%);
+    }
+  }
+
+  .custom-comparison__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* Product header with image, name, description, price */
+  .custom-comparison__product-header {
+    padding: 2rem 1rem;
+    text-align: center;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-contrast-higher);
+  }
+
+  .custom-comparison__product-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border-radius: var(--border-radius);
+  }
+
+  .custom-comparison__product-name {
+    font-family: var(--font-header);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-h4--size);
+    margin-bottom: 0.5rem;
+    color: var(--color-contrast-higher);
+  }
+
+  .custom-comparison__product-description {
+    font-family: var(--font-body);
+    font-size: var(--font-paragraph--size);
+    color: var(--color-contrast-high);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .custom-comparison__product-price {
+    font-family: var(--font-header);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-h4--size);
+    color: var(--color-contrast-higher);
+    margin-bottom: 1rem;
+  }
+
+  /* Button styles */
+  .custom-comparison__button {
+    font-family: var(--font-button);
+    font-weight: var(--font-weight-medium);
+    font-size: 15px;
+    padding: 1rem 2rem;
+    background-color: var(--color-contrast-higher);
+    color: var(--color-bg);
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    width: 100%;
+    max-width: 200px;
+    text-align: center;
+  }
+
+  .custom-comparison__button:hover {
+    background-color: var(--color-contrast-high);
+  }
+
+  /* Field rows */
+  .custom-comparison__field-row {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .custom-comparison__field-label {
+    padding: 1rem;
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-paragraph--size);
+    background-color: #f8f8f8;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    vertical-align: middle;
+    width: 200px;
+  }
+
+  .custom-comparison__field-value {
+    padding: 1rem;
+    font-family: var(--font-body);
+    font-size: var(--font-paragraph--size);
+    background-color: var(--color-bg);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  .custom-comparison__field-value:last-child {
+    border-right: none;
+  }
+
+  /* Boolean field styling */
+  .custom-comparison__check {
+    font-size: 18px;
+    color: #22c55e;
+  }
+
+  .custom-comparison__dash {
+    font-size: 18px;
+    color: #6b7280;
+  }
+
+  /* Mobile: Horizontal scroll layout */
+  @media screen and (max-width: 749px) {
+    .custom-comparison {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .custom-comparison__table {
+      min-width: 800px;
+    }
+
+    .custom-comparison__product-image {
+      width: 150px;
+      height: 150px;
+    }
+
+    .custom-comparison__product-name {
+      font-size: 18px;
+    }
+
+    .custom-comparison__product-price {
+      font-size: 20px;
+    }
+
+    .custom-comparison__field-label {
+      width: 150px;
+      font-size: 13px;
+    }
+
+    .custom-comparison__field-value {
+      font-size: 13px;
+      min-width: 120px;
+    }
+  }
+{% endstylesheet %}
+
+{%- liquid
+  # Get the main product from section settings
+  assign main_product = section.settings.main_product
+  if main_product == blank
+    assign main_product = product
+  endif
+  
+  # Get comparison products
+  assign comparison_products = section.settings.comparison_products
+  
+  # Get the first product's comparison specs to determine field structure
+  assign spec_fields = null
+  if main_product != blank and main_product.metafields.custom.comparison_specs != blank
+    assign spec_fields = main_product.metafields.custom.comparison_specs.value
+  endif
+-%}
+
+{% if main_product != blank and spec_fields != blank %}
+  <section class="custom-comparison tw-py-16" {{ section.shopify_attributes }}>
+    <div class="tw-mx-auto tw-max-w-7xl tw-px-4">
+      <!-- Section Header -->
+      {% if section.settings.heading != blank %}
+        <h2 class="tw-text-center tw-mb-12">{{ section.settings.heading }}</h2>
+      {% endif %}
+
+      <!-- Comparison Table -->
+      <div class="custom-comparison__table-container">
+        <table class="custom-comparison__table">
+          <!-- Product Headers Row -->
+          <thead>
+            <tr>
+              <!-- Empty cell for field labels column -->
+              <th class="custom-comparison__field-label"></th>
+              
+              <!-- Main Product -->
+              <th class="custom-comparison__product-header">
+                <!-- Product Image -->
+                {% if main_product.featured_image %}
+                  {{
+                    main_product.featured_image
+                    | image_url: width: 400
+                    | image_tag:
+                      loading: 'lazy',
+                      class: 'custom-comparison__product-image',
+                      alt: main_product.title
+                  }}
+                {% endif %}
+
+                <!-- Product Name -->
+                <h3 class="custom-comparison__product-name">{{ main_product.title }}</h3>
+
+                <!-- Product Description -->
+                {% assign short_description = main_product.metafields.custom.comparison_specs.value.comparison_short_description %}
+                {% if short_description == blank %}
+                  {% assign short_description = main_product.description | strip_html | truncate: 100 %}
+                {% endif %}
+                <p class="custom-comparison__product-description">{{ short_description }}</p>
+
+                <!-- Product Price -->
+                <div class="custom-comparison__product-price">
+                  {{ main_product.price | money }}
+                </div>
+
+                <!-- Add to Cart Button -->
+                <button type="button" class="custom-comparison__button" onclick="document.querySelector('form[action*=\"/cart/add\"]')?.submit()">
+                  Add to cart
+                </button>
+              </th>
+              
+              <!-- Comparison Products -->
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <th class="custom-comparison__product-header">
+                    <!-- Product Image -->
+                    {% if comp_product.featured_image %}
+                      {{
+                        comp_product.featured_image
+                        | image_url: width: 400
+                        | image_tag:
+                          loading: 'lazy',
+                          class: 'custom-comparison__product-image',
+                          alt: comp_product.title
+                      }}
+                    {% endif %}
+
+                    <!-- Product Name -->
+                    <h3 class="custom-comparison__product-name">{{ comp_product.title }}</h3>
+
+                    <!-- Product Description -->
+                    {% assign comp_short_description = comp_product.metafields.custom.comparison_specs.value.comparison_short_description %}
+                    {% if comp_short_description == blank %}
+                      {% assign comp_short_description = comp_product.description | strip_html | truncate: 100 %}
+                    {% endif %}
+                    <p class="custom-comparison__product-description">{{ comp_short_description }}</p>
+
+                    <!-- Product Price -->
+                    <div class="custom-comparison__product-price">
+                      {{ comp_product.price | money }}
+                    </div>
+
+                    <!-- Shop Now Button -->
+                    <a href="{{ comp_product.url }}" class="custom-comparison__button">
+                      Shop now
+                    </a>
+                  </th>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          </thead>
+
+          <!-- Comparison Fields -->
+          <tbody>
+            <!-- Trip Length -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Trip length</td>
+              <td class="custom-comparison__field-value">
+                {{ main_product.metafields.custom.comparison_specs.value.trip_length | default: '—' }}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {{ comp_product.metafields.custom.comparison_specs.value.trip_length | default: '—' }}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Weight -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Weight</td>
+              <td class="custom-comparison__field-value">
+                {% assign weight = main_product.metafields.custom.comparison_specs.value.weight %}
+                {% if weight != blank %}{{ weight }} lbs{% else %}—{% endif %}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {% assign comp_weight = comp_product.metafields.custom.comparison_specs.value.weight %}
+                    {% if comp_weight != blank %}{{ comp_weight }} lbs{% else %}—{% endif %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Capacity -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Capacity</td>
+              <td class="custom-comparison__field-value">
+                {{ main_product.metafields.custom.comparison_specs.value.capacity | default: '—' }}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {{ comp_product.metafields.custom.comparison_specs.value.capacity | default: '—' }}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Dimensions -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Dimensions</td>
+              <td class="custom-comparison__field-value">
+                {{ main_product.metafields.custom.comparison_specs.value.dimensions | default: '—' }}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {{ comp_product.metafields.custom.comparison_specs.value.dimensions | default: '—' }}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Type of Travel -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Type of travel</td>
+              <td class="custom-comparison__field-value">
+                {{ main_product.metafields.custom.comparison_specs.value.type_of_travel | default: '—' }}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {{ comp_product.metafields.custom.comparison_specs.value.type_of_travel | default: '—' }}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Number of Pockets -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Number of pockets</td>
+              <td class="custom-comparison__field-value">
+                {% assign pocket_count = main_product.metafields.custom.comparison_specs.value.number_of_pockets %}
+                {{ pocket_count | default: '—' }}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {% assign comp_pocket_count = comp_product.metafields.custom.comparison_specs.value.number_of_pockets %}
+                    {{ comp_pocket_count | default: '—' }}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Wheels -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Wheels</td>
+              <td class="custom-comparison__field-value">
+                {{ main_product.metafields.custom.comparison_specs.value.wheels | default: '—' }}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {{ comp_product.metafields.custom.comparison_specs.value.wheels | default: '—' }}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Corner Protection -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Corner protection</td>
+              <td class="custom-comparison__field-value">
+                {{ main_product.metafields.custom.comparison_specs.value.corner_protection | default: '—' }}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {{ comp_product.metafields.custom.comparison_specs.value.corner_protection | default: '—' }}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Padded External Pocket -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Padded external pocket</td>
+              <td class="custom-comparison__field-value">
+                {% assign has_padded_pocket = main_product.metafields.custom.comparison_specs.value.padded_external_pocket %}
+                {% if has_padded_pocket == true %}
+                  <span class="custom-comparison__check">✓</span>
+                {% elsif has_padded_pocket == false %}
+                  <span class="custom-comparison__dash">—</span>
+                {% else %}
+                  <span class="custom-comparison__dash">—</span>
+                {% endif %}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {% assign comp_has_padded_pocket = comp_product.metafields.custom.comparison_specs.value.padded_external_pocket %}
+                    {% if comp_has_padded_pocket == true %}
+                      <span class="custom-comparison__check">✓</span>
+                    {% elsif comp_has_padded_pocket == false %}
+                      <span class="custom-comparison__dash">—</span>
+                    {% else %}
+                      <span class="custom-comparison__dash">—</span>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Deep Packable Base -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Deep packable base</td>
+              <td class="custom-comparison__field-value">
+                {% assign has_deep_base = main_product.metafields.custom.comparison_specs.value.deep_packable_base %}
+                {% if has_deep_base == true %}
+                  <span class="custom-comparison__check">✓</span>
+                {% elsif has_deep_base == false %}
+                  <span class="custom-comparison__dash">—</span>
+                {% else %}
+                  <span class="custom-comparison__dash">—</span>
+                {% endif %}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {% assign comp_has_deep_base = comp_product.metafields.custom.comparison_specs.value.deep_packable_base %}
+                    {% if comp_has_deep_base == true %}
+                      <span class="custom-comparison__check">✓</span>
+                    {% elsif comp_has_deep_base == false %}
+                      <span class="custom-comparison__dash">—</span>
+                    {% else %}
+                      <span class="custom-comparison__dash">—</span>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+
+            <!-- Includes Accessory Bag -->
+            <tr class="custom-comparison__field-row">
+              <td class="custom-comparison__field-label">Includes accessory bag</td>
+              <td class="custom-comparison__field-value">
+                {% assign includes_accessory = main_product.metafields.custom.comparison_specs.value.includes_accessory_bag %}
+                {% if includes_accessory == true %}
+                  <span class="custom-comparison__check">✓</span>
+                {% elsif includes_accessory == false %}
+                  <span class="custom-comparison__dash">—</span>
+                {% else %}
+                  <span class="custom-comparison__dash">—</span>
+                {% endif %}
+              </td>
+              {% for comp_product in comparison_products limit: 3 %}
+                {% if comp_product != blank and comp_product.id != main_product.id %}
+                  <td class="custom-comparison__field-value">
+                    {% assign comp_includes_accessory = comp_product.metafields.custom.comparison_specs.value.includes_accessory_bag %}
+                    {% if comp_includes_accessory == true %}
+                      <span class="custom-comparison__check">✓</span>
+                    {% elsif comp_includes_accessory == false %}
+                      <span class="custom-comparison__dash">—</span>
+                    {% else %}
+                      <span class="custom-comparison__dash">—</span>
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom Comparison",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Compare Bags"
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "paragraph",
+      "content": "Select the main product (current product page) and up to 3 products to compare against it."
+    },
+    {
+      "type": "product",
+      "id": "main_product",
+      "label": "Main Product",
+      "info": "The primary product being compared (usually the current product)"
+    },
+    {
+      "type": "product_list",
+      "id": "comparison_products", 
+      "label": "Comparison Products",
+      "limit": 3,
+      "info": "Select up to 3 products to compare against the main product"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Comparison",
+      "settings": {
+        "heading": "Compare Bags",
+        "main_product": "{{ product }}"
+      }
+    }
+  ]
+}
+{% endschema %}
