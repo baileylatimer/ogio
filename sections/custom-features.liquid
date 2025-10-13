@@ -6,18 +6,19 @@
 
 {% stylesheet %}
   .custom-features {
-    /* Base container styles */
+    /* Base container styles - Mobile */
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 584px;
     overflow: hidden;
   }
 
-  /* Desktop: Beveled corners */
+  /* Desktop: Beveled corners with page container */
   @media screen and (min-width: 750px) {
     .custom-features {
+      height: 620px;
+      width: auto;
       clip-path: polygon(5% 0, 95% 0, 100% 10%, 100% 90%, 95% 100%, 5% 100%, 0 90%, 0 10%);
-      margin: 0 var(--spacing-lg);
     }
   }
 
@@ -70,12 +71,24 @@
     z-index: 20;
   }
 
+  .custom-features__progress-segment {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .custom-features__progress-bar {
+    width: 100%;
     height: 4px;
     background-color: rgba(255, 255, 255, 0.3);
     overflow: hidden;
     cursor: pointer;
     transition: background-color 0.2s ease;
+  }
+
+  .custom-features__progress-segment:not(:last-child) .custom-features__progress-bar {
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
   }
 
   .custom-features__progress-fill {
@@ -89,27 +102,19 @@
     background-color: rgba(255, 255, 255, 0.5);
   }
 
-  /* Labels for desktop */
-  .custom-features__labels {
+  /* Labels for desktop - integrated with progress segments */
+  .custom-features__label {
     display: none;
   }
 
   @media screen and (min-width: 750px) {
-    .custom-features__labels {
-      display: block;
-      position: absolute;
-      bottom: 30px;
-      left: 0;
-      right: 0;
-      z-index: 25;
-    }
-
     .custom-features__label {
-      position: absolute;
+      display: block;
+      margin-top: 8px;
+      text-align: center;
       color: var(--color-bg);
       font-size: 14px;
       font-weight: var(--font-weight-regular);
-      transform: translateX(-50%);
       cursor: pointer;
       transition: opacity 0.2s ease;
     }
@@ -121,9 +126,14 @@
 
   /* Content animations */
   .custom-features__content-inner {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     transform: translateY(20px);
     opacity: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;
+    padding: inherit;
   }
 
   .custom-features__content-inner.active {
@@ -176,9 +186,9 @@
 
 {% if features_count > 0 %}
   <section 
-    class="custom-features tw-relative tw-w-full tw-h-screen tw-overflow-hidden"
+    class="custom-features tw-relative tw-overflow-hidden tw-mt-16"
     data-features-count="{{ features_count }}"
-    data-autoplay-interval="1500"
+    data-autoplay-interval="3000"
     {{ section.shopify_attributes }}
   >
     <!-- Background Images -->
@@ -205,7 +215,7 @@
     <div class="custom-features__gradient"></div>
 
     <!-- Content -->
-    <div class="custom-features__content tw-flex tw-flex-col tw-justify-end tw-h-full tw-p-8 tw-max-w-4xl">
+    <div class="custom-features__content tw-flex tw-flex-col tw-justify-end tw-h-full tw-p-16 tw-pb-16 lg:tw-pb-20 tw-max-w-4xl">
       {% for feature in features limit: 6 %}
         <div 
           class="custom-features__content-inner{% if forloop.first %} active{% endif %}"
@@ -222,32 +232,26 @@
     </div>
 
     <!-- Progress Navigation -->
-    <div class="custom-features__progress tw-p-8">
-      <!-- Progress Bars -->
-      <div class="tw-flex tw-gap-1 tw-mb-4">
+    <div class="custom-features__progress tw-pb-2 tw-px-16">
+      <!-- Progress Segments with Integrated Labels -->
+      <div class="tw-flex tw-mb-4">
         {% for feature in features limit: 6 %}
           <div 
-            class="custom-features__progress-bar tw-flex-1"
+            class="custom-features__progress-segment"
             data-feature-index="{{ forloop.index0 }}"
-            style="width: {{ 100.0 | divided_by: features_count }}%"
           >
-            <div class="custom-features__progress-fill"></div>
+            <div class="custom-features__progress-bar">
+              <div class="custom-features__progress-fill"></div>
+            </div>
+            {% if feature.label %}
+              <span 
+                class="custom-features__label"
+                data-feature-index="{{ forloop.index0 }}"
+              >
+                {{ feature.label }}
+              </span>
+            {% endif %}
           </div>
-        {% endfor %}
-      </div>
-
-      <!-- Labels (Desktop Only) -->
-      <div class="custom-features__labels">
-        {% for feature in features limit: 6 %}
-          {% if feature.label %}
-            <span 
-              class="custom-features__label"
-              data-feature-index="{{ forloop.index0 }}"
-              style="left: {{ forloop.index0 | times: 100.0 | divided_by: features_count | plus: 50.0 | divided_by: features_count }}%"
-            >
-              {{ feature.label }}
-            </span>
-          {% endif %}
         {% endfor %}
       </div>
     </div>
@@ -270,6 +274,7 @@
       // Get all elements
       const backgrounds = section.querySelectorAll('.custom-features__background');
       const contents = section.querySelectorAll('.custom-features__content-inner');
+      const progressSegments = section.querySelectorAll('.custom-features__progress-segment');
       const progressBars = section.querySelectorAll('.custom-features__progress-bar');
       const progressFills = section.querySelectorAll('.custom-features__progress-fill');
       const labels = section.querySelectorAll('.custom-features__label');
@@ -371,7 +376,7 @@
 {
   "name": "Custom Features",
   "tag": "section",
-  "class": "section",
+  "class": "lg:tw-px-8",
   "settings": [
     {
       "type": "header",

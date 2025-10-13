@@ -330,7 +330,6 @@ h2 {
   font-size: var(--font-h2--size) !important;
   line-height: var(--font-h2--line-height) !important;
   letter-spacing: var(--font-h2--letter-spacing) !important;
-  color: #28282A !important
 }
 @media screen and (max-width: 749px) {
   h2 {
