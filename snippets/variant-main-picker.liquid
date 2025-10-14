@@ -480,11 +480,29 @@
             </div>
           </div>
         {%- endif -%}
-      {%- endfor -%}
+        {%- endfor -%}
+
+      <!-- Airline Compatibility Link -->
+      {% if product.metafields.custom.comparison_specs.value.type_of_travel != blank %}
+        <div class="variant-picker__airline-compatibility tw-mt-4">
+          <button 
+            type="button" 
+            class="airline-compatibility-trigger tw-text-sm tw-underline tw-text-gray-700 hover:tw-text-black tw-transition-colors tw-cursor-pointer tw-bg-none tw-border-none tw-p-0 tw-font-medium"
+            onclick="openAirlineModal()"
+          >
+            Airline Compatibility
+          </button>
+        </div>
+      {% endif %}
 
       <script type="application/json">
         {{ product_resource.selected_or_first_available_variant | json }}
       </script>
     </form>
+
+    <!-- Include Airline Modal -->
+    {% if product.metafields.custom.comparison_specs.value.type_of_travel != blank %}
+      {% render 'airline-compatibility-modal', product: product %}
+    {% endif %}
   </variant-picker>
 {% endunless %}

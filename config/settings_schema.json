@@ -2240,5 +2240,39 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "Airline Compatibility",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Modal Content"
+      },
+      {
+        "type": "paragraph",
+        "content": "Customize the text content displayed in the airline compatibility modal."
+      },
+      {
+        "type": "text",
+        "id": "airline_modal_title",
+        "label": "Modal Title",
+        "default": "Have an airline in mind?",
+        "info": "The main heading displayed at the top of the modal"
+      },
+      {
+        "type": "textarea",
+        "id": "airline_modal_description",
+        "label": "Modal Description",
+        "default": "If you've got a trip coming up (or a frequent flier status to maintain), use the chart below to see which carry-on will fit on your flights. We tested our carry-ons at JFK, EWR, LHR, and LGW to see how each size fits on the below airlines.",
+        "info": "The description text shown below the title"
+      },
+      {
+        "type": "textarea",
+        "id": "airline_modal_disclaimer",
+        "label": "Modal Disclaimer",
+        "default": "Keep in mind that this info can change at any time, but don't worry: we'll do our best to keep it up to date. You'll also want to check the airline that's operating the flight, which may be different from the airline you booked with.",
+        "info": "The disclaimer text shown at the bottom of the modal"
+      }
+    ]
   }
 ]

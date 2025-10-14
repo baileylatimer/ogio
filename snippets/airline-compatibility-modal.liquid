@@ -1,0 +1,454 @@
+{% comment %}
+  Airline Compatibility Modal
+  Shows airline carry-on and checked bag compatibility based on product travel type
+  
+  @param {product} product - The current product to check travel type
+{% endcomment %}
+
+{% stylesheet %}
+  .airline-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .airline-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .airline-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    z-index: 999999;
+  }
+
+  @media screen and (min-width: 750px) {
+    .airline-modal {
+      width: 40%;
+      max-width: 600px;
+    }
+  }
+
+  .airline-modal.active {
+    transform: translateX(0);
+  }
+
+  .airline-modal__header {
+    padding: 2rem;
+    border-bottom: 1px solid #e5e5e5;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1;
+  }
+
+  .airline-modal__title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin: 0 0 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .airline-modal__close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .airline-modal__description {
+    font-family: var(--font-body);
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .airline-modal__search {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .airline-modal__search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+  }
+
+  .airline-modal__search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+  }
+
+  .airline-modal__content {
+    padding: 0 2rem 2rem;
+  }
+
+  .airline-modal__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  .airline-modal__table th {
+    text-align: left;
+    padding: 1rem 0.5rem;
+    border-bottom: 2px solid #e5e5e5;
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-medium);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .airline-modal__table td {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-family: var(--font-body);
+    vertical-align: middle;
+  }
+
+  .airline-modal__table tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  .airline-modal__airline-name {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .airline-modal__compatibility {
+    text-align: center;
+    width: 80px;
+  }
+
+  .airline-modal__check {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+  }
+
+  .airline-modal__dash {
+    font-size: 18px;
+    color: #6b7280;
+  }
+
+  .airline-modal__disclaimer {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: #666;
+    line-height: 1.4;
+  }
+
+  /* Hidden class for search filtering */
+  .airline-row.hidden {
+    display: none;
+  }
+{% endstylesheet %}
+
+{% liquid
+  # Get the product's travel type from meta fields
+  assign travel_type = product.metafields.custom.comparison_specs.value.type_of_travel
+  if travel_type == blank
+    assign travel_type = 'Carry-on'
+  endif
+  
+  # Determine realistic compatibility patterns
+  assign is_carry_on_size = false
+  assign is_checked_size = false
+  
+  # Note: Values are capitalized (Backpack, Carry-on, Checked, Oversized)
+  if travel_type == 'Backpack' or travel_type == 'Carry-on'
+    assign is_carry_on_size = true
+  elsif travel_type == 'Checked' or travel_type == 'Oversized'
+    assign is_checked_size = true
+  endif
+  
+  # Define airlines with stricter carry-on policies (budget airlines)
+  assign strict_carry_on_airlines = 'frontier,spirit,allegiant,easyjet,wizz air,norwegian' | split: ','
+  
+  # Define airlines with stricter checked baggage policies (size/weight limits)
+  assign strict_checked_airlines = 'frontier,spirit,allegiant,easyjet,wizz air,china southern,ethiopian,air baltic' | split: ','
+%}
+
+<div class="airline-modal-overlay" id="airline-modal-overlay">
+  <div class="airline-modal tw-pt-24" id="airline-modal">
+    <div class="airline-modal__header">
+      <h2 class="airline-modal__title">
+        {{ settings.airline_modal_title | default: 'Have an airline in mind?' }}
+        <button class="airline-modal__close" id="airline-modal-close" aria-label="Close modal">
+          ×
+        </button>
+      </h2>
+      
+      <p class="airline-modal__description">
+        {{ settings.airline_modal_description | default: "If you've got a trip coming up (or a frequent flier status to maintain), use the chart below to see which carry-on will fit on your flights. We tested our carry-ons at JFK, EWR, LHR, and LGW to see how each size fits on the below airlines." }}
+      </p>
+      
+      <div class="airline-modal__search">
+        <svg class="airline-modal__search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input 
+          type="text" 
+          class="airline-modal__search-input" 
+          id="airline-search"
+          placeholder="Enter Airline"
+        >
+      </div>
+    </div>
+
+    <div class="airline-modal__content">
+      <table class="airline-modal__table">
+        <thead>
+          <tr>
+            <th>Airline</th>
+            <th class="airline-modal__compatibility">Carry On*</th>
+            <th class="airline-modal__compatibility">Checked*</th>
+          </tr>
+        </thead>
+        <tbody id="airline-table-body">
+          {% for airline in (1..35) %}
+            {% case forloop.index %}
+              {% when 1 %}
+                {% assign airline_name = 'Aegean Airlines' %}
+                {% assign airline_slug = 'aegean airlines' %}
+              {% when 2 %}
+                {% assign airline_name = 'Aer Lingus' %}
+                {% assign airline_slug = 'aer lingus' %}
+              {% when 3 %}
+                {% assign airline_name = 'Aeroflot' %}
+                {% assign airline_slug = 'aeroflot' %}
+              {% when 4 %}
+                {% assign airline_name = 'AeroMexico' %}
+                {% assign airline_slug = 'aeromexico' %}
+              {% when 5 %}
+                {% assign airline_name = 'Air Baltic' %}
+                {% assign airline_slug = 'air baltic' %}
+              {% when 6 %}
+                {% assign airline_name = 'Air Canada' %}
+                {% assign airline_slug = 'air canada' %}
+              {% when 7 %}
+                {% assign airline_name = 'Air Europa' %}
+                {% assign airline_slug = 'air europa' %}
+              {% when 8 %}
+                {% assign airline_name = 'Air France' %}
+                {% assign airline_slug = 'air france' %}
+              {% when 9 %}
+                {% assign airline_name = 'Air India' %}
+                {% assign airline_slug = 'air india' %}
+              {% when 10 %}
+                {% assign airline_name = 'Alaska Airlines' %}
+                {% assign airline_slug = 'alaska airlines' %}
+              {% when 11 %}
+                {% assign airline_name = 'Alitalia' %}
+                {% assign airline_slug = 'alitalia' %}
+              {% when 12 %}
+                {% assign airline_name = 'All Nippon Airways' %}
+                {% assign airline_slug = 'all nippon airways' %}
+              {% when 13 %}
+                {% assign airline_name = 'Allegiant' %}
+                {% assign airline_slug = 'allegiant' %}
+              {% when 14 %}
+                {% assign airline_name = 'American Airlines' %}
+                {% assign airline_slug = 'american airlines' %}
+              {% when 15 %}
+                {% assign airline_name = 'Austrian Airlines' %}
+                {% assign airline_slug = 'austrian airlines' %}
+              {% when 16 %}
+                {% assign airline_name = 'British Airways' %}
+                {% assign airline_slug = 'british airways' %}
+              {% when 17 %}
+                {% assign airline_name = 'Cathay Pacific' %}
+                {% assign airline_slug = 'cathay pacific' %}
+              {% when 18 %}
+                {% assign airline_name = 'China Southern' %}
+                {% assign airline_slug = 'china southern' %}
+              {% when 19 %}
+                {% assign airline_name = 'Delta' %}
+                {% assign airline_slug = 'delta' %}
+              {% when 20 %}
+                {% assign airline_name = 'EasyJet' %}
+                {% assign airline_slug = 'easyjet' %}
+              {% when 21 %}
+                {% assign airline_name = 'Ethiopian' %}
+                {% assign airline_slug = 'ethiopian' %}
+              {% when 22 %}
+                {% assign airline_name = 'Frontier' %}
+                {% assign airline_slug = 'frontier' %}
+              {% when 23 %}
+                {% assign airline_name = 'Iberia' %}
+                {% assign airline_slug = 'iberia' %}
+              {% when 24 %}
+                {% assign airline_name = 'Icelandair' %}
+                {% assign airline_slug = 'icelandair' %}
+              {% when 25 %}
+                {% assign airline_name = 'JetBlue' %}
+                {% assign airline_slug = 'jetblue' %}
+              {% when 26 %}
+                {% assign airline_name = 'KLM' %}
+                {% assign airline_slug = 'klm' %}
+              {% when 27 %}
+                {% assign airline_name = 'LOT Polish Airlines' %}
+                {% assign airline_slug = 'lot polish airlines' %}
+              {% when 28 %}
+                {% assign airline_name = 'Lufthansa' %}
+                {% assign airline_slug = 'lufthansa' %}
+              {% when 29 %}
+                {% assign airline_name = 'Norwegian' %}
+                {% assign airline_slug = 'norwegian' %}
+              {% when 30 %}
+                {% assign airline_name = 'Porter Air' %}
+                {% assign airline_slug = 'porter air' %}
+              {% when 31 %}
+                {% assign airline_name = 'Qantas' %}
+                {% assign airline_slug = 'qantas' %}
+              {% when 32 %}
+                {% assign airline_name = 'Scandinavian Airlines' %}
+                {% assign airline_slug = 'scandinavian airlines' %}
+              {% when 33 %}
+                {% assign airline_name = 'Southwest' %}
+                {% assign airline_slug = 'southwest' %}
+              {% when 34 %}
+                {% assign airline_name = 'Spirit' %}
+                {% assign airline_slug = 'spirit' %}
+              {% when 35 %}
+                {% assign airline_name = 'United' %}
+                {% assign airline_slug = 'united' %}
+            {% endcase %}
+
+            <tr class="airline-row" data-airline="{{ airline_slug }}">
+              <td class="airline-modal__airline-name">{{ airline_name }}</td>
+              <td class="airline-modal__compatibility">
+                {% if is_carry_on_size %}
+                  {% if strict_carry_on_airlines contains airline_slug %}
+                    <span class="airline-modal__dash">—</span>
+                  {% else %}
+                    <span class="airline-modal__check">
+                      <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                  {% endif %}
+                {% else %}
+                  <span class="airline-modal__dash">—</span>
+                {% endif %}
+              </td>
+              <td class="airline-modal__compatibility">
+                {% if is_carry_on_size %}
+                  <span class="airline-modal__check">
+                    <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                {% elsif is_checked_size %}
+                  {% if strict_checked_airlines contains airline_slug %}
+                    <span class="airline-modal__dash">—</span>
+                  {% else %}
+                    <span class="airline-modal__check">
+                      <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                  {% endif %}
+                {% else %}
+                  <span class="airline-modal__dash">—</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="airline-modal__disclaimer">
+        {{ settings.airline_modal_disclaimer | default: "Keep in mind that this info can change at any time, but don't worry: we'll do our best to keep it up to date. You'll also want to check the airline that's operating the flight, which may be different from the airline you booked with." }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const overlay = document.getElementById('airline-modal-overlay');
+    const modal = document.getElementById('airline-modal');
+    const closeBtn = document.getElementById('airline-modal-close');
+    const searchInput = document.getElementById('airline-search');
+    const airlineRows = document.querySelectorAll('.airline-row');
+
+    // Open modal function
+    window.openAirlineModal = function() {
+      overlay.classList.add('active');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    // Close modal function
+    function closeModal() {
+      overlay.classList.remove('active');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Event listeners
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) {
+        closeModal();
+      }
+    });
+
+    // Escape key to close
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase().trim();
+      
+      airlineRows.forEach(function(row) {
+        const airlineName = row.getAttribute('data-airline');
+        if (airlineName.includes(searchTerm)) {
+          row.classList.remove('hidden');
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>
