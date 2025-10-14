@@ -728,6 +728,11 @@ video {
   padding-bottom: 4rem;
 }
 
+.tw-py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .tw-pb-12 {
   padding-bottom: 3rem;
 }
