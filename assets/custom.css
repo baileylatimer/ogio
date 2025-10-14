@@ -863,3 +863,14 @@ summary {
   white-space: nowrap;
 }
 
+@media screen and (width < 750px) {
+  .header__columns .header-logo {
+      grid-area: center;
+      transform: translate(110%, -22px);
+      z-index: 99;
+      -webkit-transform: translate(110%, -22px);
+      -moz-transform: translate(110%, -22px);
+      -ms-transform: translate(110%, -22px);
+      -o-transform: translate(110%, -22px);
+}
+}
