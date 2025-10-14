@@ -3,7 +3,6 @@ node_modules/
 .npm
 
 # Build outputs
-assets/tailwind.css
 assets/bundle.js
 assets/bundle.js.map
 
