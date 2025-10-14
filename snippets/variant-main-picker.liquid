@@ -11,9 +11,11 @@
 
   .variant-picker__form {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--padding-lg);
     width: 100%;
+    justify-content: space-between;
+    align-items: flex-start;
   }
 
   .variant-picker[data-shopify-visual-preview] {
@@ -484,7 +486,7 @@
 
       <!-- Airline Compatibility Link -->
       {% if product.metafields.custom.comparison_specs.value.type_of_travel != blank %}
-        <div class="variant-picker__airline-compatibility tw-mt-4">
+        <div class="variant-picker__airline-compatibility">
           <button 
             type="button" 
             class="airline-compatibility-trigger tw-text-sm tw-underline tw-text-gray-700 hover:tw-text-black tw-transition-colors tw-cursor-pointer tw-bg-none tw-border-none tw-p-0 tw-font-medium"

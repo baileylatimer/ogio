@@ -857,3 +857,9 @@ summary {
 .product-information {
   margin-top: 4em;
 }
+
+
+.variant-picker__airline-compatibility {
+  white-space: nowrap;
+}
+
