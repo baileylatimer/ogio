@@ -117,8 +117,9 @@
 
   /* Boolean field styling */
   .custom-comparison__check {
-    font-size: 18px;
-    color: #22c55e;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
   }
 
   .custom-comparison__dash {
@@ -444,7 +445,11 @@
                 {% assign has_padded_pocket = main_product.metafields.custom.comparison_specs.value.padded_external_pocket %}
                 <span class="mobile-value">
                   {% if has_padded_pocket == true %}
-                    <span class="custom-comparison__check">✓</span>
+                    <span class="custom-comparison__check">
+                      <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
                   {% elsif has_padded_pocket == false %}
                     <span class="custom-comparison__dash">—</span>
                   {% else %}
@@ -459,7 +464,11 @@
                     {% assign comp_has_padded_pocket = comp_product.metafields.custom.comparison_specs.value.padded_external_pocket %}
                     <span class="mobile-value">
                       {% if comp_has_padded_pocket == true %}
-                        <span class="custom-comparison__check">✓</span>
+                        <span class="custom-comparison__check">
+                          <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
                       {% elsif comp_has_padded_pocket == false %}
                         <span class="custom-comparison__dash">—</span>
                       {% else %}
@@ -479,7 +488,11 @@
                 {% assign has_deep_base = main_product.metafields.custom.comparison_specs.value.deep_packable_base %}
                 <span class="mobile-value">
                   {% if has_deep_base == true %}
-                    <span class="custom-comparison__check">✓</span>
+                    <span class="custom-comparison__check">
+                      <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
                   {% elsif has_deep_base == false %}
                     <span class="custom-comparison__dash">—</span>
                   {% else %}
@@ -494,7 +507,11 @@
                     {% assign comp_has_deep_base = comp_product.metafields.custom.comparison_specs.value.deep_packable_base %}
                     <span class="mobile-value">
                       {% if comp_has_deep_base == true %}
-                        <span class="custom-comparison__check">✓</span>
+                        <span class="custom-comparison__check">
+                          <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
                       {% elsif comp_has_deep_base == false %}
                         <span class="custom-comparison__dash">—</span>
                       {% else %}
@@ -514,7 +531,11 @@
                 {% assign includes_accessory = main_product.metafields.custom.comparison_specs.value.includes_accessory_bag %}
                 <span class="mobile-value">
                   {% if includes_accessory == true %}
-                    <span class="custom-comparison__check">✓</span>
+                    <span class="custom-comparison__check">
+                      <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
                   {% elsif includes_accessory == false %}
                     <span class="custom-comparison__dash">—</span>
                   {% else %}
@@ -529,7 +550,11 @@
                     {% assign comp_includes_accessory = comp_product.metafields.custom.comparison_specs.value.includes_accessory_bag %}
                     <span class="mobile-value">
                       {% if comp_includes_accessory == true %}
-                        <span class="custom-comparison__check">✓</span>
+                        <span class="custom-comparison__check">
+                          <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.375 6L9.375 17L4.375 12" stroke="#727272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          </svg>
+                        </span>
                       {% elsif comp_includes_accessory == false %}
                         <span class="custom-comparison__dash">—</span>
                       {% else %}
