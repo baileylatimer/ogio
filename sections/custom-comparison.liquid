@@ -30,6 +30,7 @@
     background-color: var(--color-bg);
     vertical-align: top;
     position: relative;
+    height: 1px;
   }
 
   /* Active product highlighting */
@@ -218,7 +219,7 @@
                   <p class="custom-comparison__product-description">{{ short_description }}</p>
 
                   <!-- Product Price -->
-                  <h5 class="custom-comparison__product-price">
+                  <h5 class="custom-comparison__product-price tw-pb-6">
                     {{ main_product.price | money | remove: '.00' }}
                   </h5>
                 </div>
@@ -258,7 +259,7 @@
                       <p class="custom-comparison__product-description">{{ comp_short_description }}</p>
 
                       <!-- Product Price -->
-                      <h5 class="custom-comparison__product-price">
+                      <h5 class="custom-comparison__product-price tw-pb-6">
                         {{ comp_product.price | money | remove: '.00' }}
                       </h5>
 
