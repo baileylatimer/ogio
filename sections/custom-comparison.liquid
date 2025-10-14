@@ -139,8 +139,7 @@
     }
 
     .custom-comparison__product-image {
-      width: 150px;
-      height: 150px;
+
     }
 
     /* Hide labels column on mobile */
@@ -302,13 +301,13 @@
               <td class="custom-comparison__field-label">Trip length</td>
               <td class="custom-comparison__field-value active">
                 <span class="mobile-label">Trip length</span>
-                <span class="mobile-value">{{ main_product.metafields.custom.comparison_specs.value.trip_length | default: '—' }}</span>
+                <span class="mobile-value">{{ main_product.metafields.custom.comparison_specs.value.trip_length | default: '—' }} days</span>
               </td>
               {% for comp_product in comparison_products limit: 3 %}
                 {% if comp_product != blank and comp_product.id != main_product.id %}
                   <td class="custom-comparison__field-value">
                     <span class="mobile-label">Trip length</span>
-                    <span class="mobile-value">{{ comp_product.metafields.custom.comparison_specs.value.trip_length | default: '—' }}</span>
+                    <span class="mobile-value">{{ comp_product.metafields.custom.comparison_specs.value.trip_length | default: '—' }} days</span>
                   </td>
                 {% endif %}
               {% endfor %}
