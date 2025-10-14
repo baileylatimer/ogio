@@ -215,7 +215,7 @@
     <div class="custom-features__gradient"></div>
 
     <!-- Content -->
-    <div class="custom-features__content tw-flex tw-flex-col tw-justify-end tw-h-full tw-p-16 tw-pb-16 lg:tw-pb-20 tw-max-w-4xl">
+    <div class="custom-features__content tw-flex tw-flex-col tw-justify-end tw-h-full tw-p-8 lg:tw-p-16 tw-pb-16 lg:tw-pb-20 tw-max-w-4xl">
       {% for feature in features limit: 6 %}
         <div 
           class="custom-features__content-inner{% if forloop.first %} active{% endif %}"
@@ -232,7 +232,7 @@
     </div>
 
     <!-- Progress Navigation -->
-    <div class="custom-features__progress tw-pb-2 tw-px-16">
+    <div class="custom-features__progress tw-pb-2 tw-px-8 lg:tw-px-16">
       <!-- Progress Segments with Integrated Labels -->
       <div class="tw-flex tw-mb-4">
         {% for feature in features limit: 6 %}

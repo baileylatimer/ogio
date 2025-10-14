@@ -753,6 +753,11 @@ video {
   padding-bottom: 2rem;
 }
 
+.tw-px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .tw-pb-12 {
   padding-bottom: 3rem;
 }
@@ -860,6 +865,10 @@ video {
 
   .lg\:tw-gap-12 {
     gap: 3rem;
+  }
+
+  .lg\:tw-p-16 {
+    padding: 4rem;
   }
 
   .lg\:tw-px-16 {
