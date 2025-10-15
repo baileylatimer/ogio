@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "custom_hero_JhYe8h": {
@@ -5,14 +14,14 @@
       "name": "Custom Hero",
       "settings": {
         "overline": "ALL NEW",
-        "headline": "PACE PRO PACKS",
+        "headline": "PACE PRO Hybrid",
         "description": "Bags designed for the modern professional",
         "button_label": "Shop now",
-        "button_url": "\/collections\/all",
+        "button_url": "/collections/all",
         "desktop_media_type": "video",
-        "desktop_image": "shopify:\/\/shop_images\/acdf9afc-7306-4551-873f-60e1d8936f74.jpg",
+        "desktop_image": "shopify://shop_images/acdf9afc-7306-4551-873f-60e1d8936f74.jpg",
         "desktop_video_source": "file",
-        "desktop_video_file_url": "https:\/\/cdn.shopify.com\/videos\/c\/o\/v\/0a1c3fb89ffd422abf5384e7c823c48a.mp4",
+        "desktop_video_file_url": "https://cdn.shopify.com/videos/c/o/v/0a1c3fb89ffd422abf5384e7c823c48a.mp4",
         "mobile_media_type": "image",
         "mobile_video_source": "upload",
         "mobile_video_file_url": "",
@@ -28,7 +37,7 @@
           "name": "t:names.button",
           "settings": {
             "label": "View all",
-            "link": "shopify:\/\/collections\/all",
+            "link": "shopify://collections/all",
             "open_in_new_tab": false,
             "style_class": "button",
             "width": "fit-content",
@@ -75,7 +84,7 @@
               "type": "_product-list-text",
               "name": "t:names.collection_title",
               "settings": {
-                "text": "<h3>Best Sellers<\/h3>",
+                "text": "<h3>Best Sellers</h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -304,8 +313,8 @@
           "settings": {
             "headline": "A long lineage of organization and durability.",
             "button_label": "Shop Vault",
-            "button_url": "\/collections\/all",
-            "background_image": "shopify:\/\/shop_images\/cover--03.jpg",
+            "button_url": "/collections/all",
+            "background_image": "shopify://shop_images/cover--03.jpg",
             "invert_colors": false
           }
         },
@@ -314,8 +323,8 @@
           "settings": {
             "headline": "The perfect blend of premium style and organization",
             "button_label": "Shop Renegade",
-            "button_url": "\/collections\/all",
-            "background_image": "shopify:\/\/shop_images\/cover--04.jpg",
+            "button_url": "/collections/all",
+            "background_image": "shopify://shop_images/cover--04.jpg",
             "invert_colors": false
           }
         },
@@ -324,8 +333,8 @@
           "settings": {
             "headline": "The perfect blend of premium style and organization",
             "button_label": "Shop Renegade DNA",
-            "button_url": "\/collections\/all",
-            "background_image": "shopify:\/\/shop_images\/cover--02.jpg",
+            "button_url": "/collections/all",
+            "background_image": "shopify://shop_images/cover--02.jpg",
             "invert_colors": false
           }
         },
@@ -334,8 +343,8 @@
           "settings": {
             "headline": "A long lineage of organization and durability.",
             "button_label": "Shop Rig ST",
-            "button_url": "\/collections\/all",
-            "background_image": "shopify:\/\/shop_images\/cover--01.jpg",
+            "button_url": "/collections/all",
+            "background_image": "shopify://shop_images/cover--01.jpg",
             "invert_colors": false
           }
         }
