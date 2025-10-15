@@ -790,6 +790,14 @@ video {
   padding-top: 6rem;
 }
 
+.tw-pt-16 {
+  padding-top: 4rem;
+}
+
+.tw-pt-12 {
+  padding-top: 3rem;
+}
+
 .tw-text-left {
   text-align: left;
 }

@@ -30,7 +30,7 @@
     right: 0;
     width: 100%;
     height: 100%;
-    background: white;
+    background: var(--color-bg);
     transform: translateX(100%);
     transition: transform 0.3s ease;
     overflow-y: auto;
@@ -53,7 +53,7 @@
     border-bottom: 1px solid #e5e5e5;
     position: sticky;
     top: 0;
-    background: white;
+    background: var(--color-bg);
     z-index: 1;
   }
 
@@ -177,6 +177,10 @@
   .airline-row.hidden {
     display: none;
   }
+
+  .airline-modal__compatibility {
+    white-space: nowrap;
+  }
 {% endstylesheet %}
 
 {% liquid
@@ -205,7 +209,7 @@
 %}
 
 <div class="airline-modal-overlay" id="airline-modal-overlay">
-  <div class="airline-modal tw-pt-24" id="airline-modal">
+  <div class="airline-modal tw-pt-12" id="airline-modal">
     <div class="airline-modal__header">
       <h2 class="airline-modal__title">
         {{ settings.airline_modal_title | default: 'Have an airline in mind?' }}
