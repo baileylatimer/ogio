@@ -61,6 +61,7 @@
         "text_tqQTNE",
         "text_twGGkJ"
       ],
+      "disabled": true,
       "name": "Heading",
       "settings": {
         "content_direction": "column",
@@ -88,6 +89,26 @@
         "gradient_direction": "to top",
         "padding-block-start": 48,
         "padding-block-end": 48
+      }
+    },
+    "custom_hero_BF8Hxi": {
+      "type": "custom-hero",
+      "name": "Custom Hero",
+      "settings": {
+        "overline": "ALL NEW",
+        "headline": "{{ collection.title }}",
+        "description": "Bags designed for the modern professional",
+        "button_label": "Shop now",
+        "button_url": "",
+        "desktop_media_type": "image",
+        "desktop_image": "shopify:\/\/shop_images\/Heros.jpg",
+        "desktop_video_source": "upload",
+        "desktop_video_file_url": "",
+        "mobile_media_type": "image",
+        "mobile_video_source": "upload",
+        "mobile_video_file_url": "",
+        "show_gradient_overlay": true,
+        "invert_colors": false
       }
     },
     "main": {
@@ -284,6 +305,7 @@
   },
   "order": [
     "section",
+    "custom_hero_BF8Hxi",
     "main"
   ]
 }
